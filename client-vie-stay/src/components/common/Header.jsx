@@ -13,7 +13,7 @@ import {
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useAuthStore } from "../../store/authStore";
-import LogoutButton from "./LogOutButton";
+import LogoutButton from "./LogoutButton";
 import axiosInstance from "../utils/AxiosInstance";
 
 // Login Prompt Modal

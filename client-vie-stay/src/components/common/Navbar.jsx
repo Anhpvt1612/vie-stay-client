@@ -11,7 +11,7 @@ import {
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useAuthStore } from "../../store/authStore"; // ✅ SỬA: Import AuthStore
-import LogoutButton from "./LogOutButton"; // ✅ GIỮ: Import LogoutButton
+import LogoutButton from "./LogoutButton"; // ✅ GIỮ: Import LogoutButton
 
 const Navbar = () => {
   // ✅ SỬA: Sử dụng AuthStore thay vì AuthContext
