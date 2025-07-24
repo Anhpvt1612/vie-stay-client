@@ -207,9 +207,9 @@ const Navbar = () => {
                     <img
                       src={
                         displayUser.profileImage
-                          ? `http://localhost:8080${displayUser.profileImage}`
+                          ? `https://vie-stay-server.vercel.app${displayUser.profileImage}`
                           : displayUser.avatar
-                          ? `http://localhost:8080${displayUser.avatar}`
+                          ? `https://vie-stay-server.vercel.app${displayUser.avatar}`
                           : "https://via.placeholder.com/32"
                       }
                       alt="avatar"
@@ -235,9 +235,9 @@ const Navbar = () => {
                           <img
                             src={
                               displayUser.profileImage
-                                ? `http://localhost:8080${displayUser.profileImage}`
+                                ? `https://vie-stay-server.vercel.app${displayUser.profileImage}`
                                 : displayUser.avatar
-                                ? `http://localhost:8080${displayUser.avatar}`
+                                ? `https://vie-stay-server.vercel.app${displayUser.avatar}`
                                 : "https://via.placeholder.com/40"
                             }
                             alt="avatar"

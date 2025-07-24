@@ -1,7 +1,7 @@
 import React from "react";
 
 const DEFAULT_AVATAR = "https://ui-avatars.com/api/?name=User&background=random";
-const IMAGE_BASE_URL = "http://localhost:8080"; // Domain backend
+const IMAGE_BASE_URL = "https://vie-stay-server.vercel.app"; // Domain backend
 
 export default function ProfileAvatar({ value, onChange, error }) {
   let avatarSrc = DEFAULT_AVATAR;

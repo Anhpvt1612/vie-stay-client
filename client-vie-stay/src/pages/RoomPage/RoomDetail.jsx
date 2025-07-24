@@ -66,9 +66,9 @@ const RoomDetail = () => {
 
       // Try multiple endpoints
       const endpoints = [
-        `http://localhost:8080/rooms/${id}`,
-        `http://localhost:8080/api/rooms/${id}`,
-        `http://localhost:8080/room/${id}`,
+        `https://vie-stay-server.vercel.app/rooms/${id}`,
+        `https://vie-stay-server.vercel.app/api/rooms/${id}`,
+        `https://vie-stay-server.vercel.app/room/${id}`,
       ];
 
       const fetchRoom = async () => {

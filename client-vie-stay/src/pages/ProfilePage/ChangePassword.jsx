@@ -34,7 +34,7 @@ const ChangePassword = () => {
     }
 
     try {
-      const res = await fetch(`http://localhost:8080/user/${userId}/password`, {
+      const res = await fetch(`https://vie-stay-server.vercel.app/user/${userId}/password`, {
         method: "PATCH",
         headers: {
           "Content-Type": "application/json",

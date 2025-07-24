@@ -131,10 +131,10 @@ const Room = () => {
 
       // Try different endpoints
       const endpoints = [
-        "http://localhost:8080/api/rooms/available",
-        "http://localhost:8080/rooms/available", 
-        "http://localhost:8080/room",
-        "http://localhost:8080/api/rooms/search?isAvailable=true"
+        "https://vie-stay-server.vercel.app/api/rooms/available",
+        "https://vie-stay-server.vercel.app/rooms/available", 
+        "https://vie-stay-server.vercel.app/room",
+        "https://vie-stay-server.vercel.app/api/rooms/search?isAvailable=true"
       ];
 
       let data = null;

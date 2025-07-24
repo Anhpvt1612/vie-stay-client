@@ -64,7 +64,7 @@ const UserManagement = () => {
       ...options
     };
 
-    const response = await fetch(`http://localhost:8080${endpoint}`, defaultOptions);
+    const response = await fetch(`https://vie-stay-server.vercel.app${endpoint}`, defaultOptions);
     
     if (!response.ok) {
       throw new Error(`API Error: ${response.status}`);

@@ -256,7 +256,7 @@ const Navbar = () => {
                 <img
                   src={
                     user.profileImage
-                      ? `http://localhost:8080${user.profileImage}`
+                      ? `https://vie-stay-server.vercel.app${user.profileImage}`
                       : "https://via.placeholder.com/80"
                   }
                   alt="avatar"

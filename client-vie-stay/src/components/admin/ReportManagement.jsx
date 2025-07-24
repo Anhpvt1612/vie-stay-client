@@ -18,7 +18,7 @@ const ReportManagement = () => {
       if (filter.status) params.status = filter.status;
       if (filter.reportType) params.reportType = filter.reportType;
 
-      const response = await axios.get('http://localhost:8080/api/reports', {
+      const response = await axios.get('https://vie-stay-server.vercel.app/api/reports', {
         params,
         headers: {
           'Authorization': `Bearer ${localStorage.getItem('token')}` // Cần có token admin
@@ -37,7 +37,7 @@ const ReportManagement = () => {
   // Fetch stats
   const fetchStats = async () => {
     try {
-      const response = await axios.get('http://localhost:8080/api/reports/stats', {
+      const response = await axios.get('https://vie-stay-server.vercel.app/api/reports/stats', {
         headers: {
           'Authorization': `Bearer ${localStorage.getItem('token')}`
         }
@@ -51,7 +51,7 @@ const ReportManagement = () => {
   // Update report status
   const updateReportStatus = async (reportId, status, adminNote = '') => {
     try {
-      await axios.patch(`http://localhost:8080/api/reports/${reportId}/status`, {
+      await axios.patch(`https://vie-stay-server.vercel.app/api/reports/${reportId}/status`, {
         status,
         adminNote
       }, {

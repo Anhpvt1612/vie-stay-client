@@ -1,4 +1,4 @@
-export const BASE_URL = "http://localhost:8080";
+export const BASE_URL = "https://vie-stay-server.vercel.app";
 
 export const path = {
     HOME: '/*',

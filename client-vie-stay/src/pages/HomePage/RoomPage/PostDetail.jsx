@@ -137,7 +137,7 @@ const PostDetail = () => {
         postId: post._id
       };
 
-      const response = await fetch('http://localhost:8080/api/reports', {
+      const response = await fetch('https://vie-stay-server.vercel.app/api/reports', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

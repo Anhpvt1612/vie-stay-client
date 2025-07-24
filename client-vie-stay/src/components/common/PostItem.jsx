@@ -293,4 +293,4 @@ const areEqual = (prevProps, nextProps) => {
     )
 }
 
-export default memo(PostItem, areEqual)
+export default memo(PostItem, areEqual) 

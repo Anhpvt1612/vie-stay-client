@@ -43,7 +43,7 @@ const ChatbotAI = () => {
   // Lấy phòng trọ mới nhất
   const fetchLatestRoomsInfo = async () => {
     try {
-      const res = await fetch("http://localhost:8080/rooms");
+      const res = await fetch("https://vie-stay-server.vercel.app/rooms");
       const data = await res.json();
       if (data?.data?.rooms && Array.isArray(data.data.rooms)) {
         const info = data.data.rooms.slice(0, 5).map((room, idx) => {
@@ -64,7 +64,7 @@ const ChatbotAI = () => {
   // Lấy phòng trọ theo khu vực
   const fetchRoomsByDistrict = async (district) => {
     try {
-      const res = await fetch(`http://localhost:8080/rooms/search?district=${encodeURIComponent(district)}`);
+      const res = await fetch(`https://vie-stay-server.vercel.app/rooms/search?district=${encodeURIComponent(district)}`);
       const data = await res.json();
       console.log("DATA ROOMS BY DISTRICT:", data); // Thêm dòng này
 

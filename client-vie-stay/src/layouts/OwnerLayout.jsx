@@ -181,7 +181,7 @@ const updatedNavigation = navigation.map((item) => ({
               <div className="flex-shrink-0">
                 {user?.profileImage ? (
                   <img
-                    src={`http://localhost:8080${user.profileImage}`}
+                    src={`https://vie-stay-server.vercel.app${user.profileImage}`}
                     alt="Profile"
                     className="h-8 w-8 rounded-full object-cover"
                   />
@@ -273,7 +273,7 @@ const updatedNavigation = navigation.map((item) => ({
               <div className="flex-shrink-0">
                 {user?.profileImage ? (
                   <img
-                    src={`http://localhost:8080${user.profileImage}`}
+                    src={`https://vie-stay-server.vercel.app${user.profileImage}`}
                     alt="Profile"
                     className="h-8 w-8 rounded-full object-cover"
                   />
@@ -368,7 +368,7 @@ const updatedNavigation = navigation.map((item) => ({
               <div className="ml-3 flex items-center md:hidden">
                 {user?.profileImage ? (
                   <img
-                    src={`http://localhost:8080${user.profileImage}`}
+                    src={`https://vie-stay-server.vercel.app${user.profileImage}`}
                     alt="Profile"
                     className="h-8 w-8 rounded-full object-cover"
                   />

@@ -30,7 +30,7 @@ const Room = () => {
   useEffect(() => {
     const loadRooms = async () => {
       try {
-        const res = await fetch("http://localhost:8080/rooms");
+        const res = await fetch("https://vie-stay-server.vercel.app/rooms");
         if (!res.ok) {
           throw new Error("Lỗi server khi tải danh sách phòng");
         }

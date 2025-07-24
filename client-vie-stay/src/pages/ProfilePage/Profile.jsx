@@ -31,7 +31,7 @@ const initialProfile = {
 };
 
 // DOMAIN_BACKEND dùng cho ảnh
-const DOMAIN_BACKEND = "http://localhost:8080";
+const DOMAIN_BACKEND = "https://vie-stay-server.vercel.app";
 
 function formatDate(dateStr) {
   if (!dateStr) return "";
