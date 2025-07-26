@@ -27,9 +27,9 @@ const Navbar = () => {
   };
 
   // ✅ THÊM: Check user role
- const isOwner = () => {
-  return user?.role?.includes('landlord') ;
-};
+  const isOwner = () => {
+    return user?.role?.includes("landlord");
+  };
 
   return (
     <div className="w-full shadow-sm border-b bg-white relative z-50">
@@ -80,7 +80,9 @@ const Navbar = () => {
               {/* ✅ SỬA: Role-based navigation */}
               <div
                 className="flex items-center gap-1 cursor-pointer hover:text-orange-600"
-                onClick={() => handleNavigate(isOwner() ? "/owner" : "/dashboard")}
+                onClick={() =>
+                  handleNavigate(isOwner() ? "/owner" : "/dashboard")
+                }
               >
                 <Folder size={16} /> Quản lý
               </div>
@@ -130,7 +132,7 @@ const Navbar = () => {
                 <img
                   src={
                     user.profileImage
-                      ? `https://vie-stay-server.vercel.app${user.profileImage}`
+                      ? `https://vie-stay-server.onrender.com${user.profileImage}`
                       : "https://via.placeholder.com/80"
                   }
                   alt="avatar"

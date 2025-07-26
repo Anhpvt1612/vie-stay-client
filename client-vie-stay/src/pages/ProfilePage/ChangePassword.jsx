@@ -34,18 +34,22 @@ const ChangePassword = () => {
     }
 
     try {
-      const res = await fetch(`https://vie-stay-server.vercel.app/user/${userId}/password`, {
-        method: "PATCH",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify({ currentPassword, password: newPassword }),
-      });
+      const res = await fetch(
+        `https://vie-stay-server.onrender.com/user/${userId}/password`,
+        {
+          method: "PATCH",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({ currentPassword, password: newPassword }),
+        }
+      );
 
       const data = await res.json();
 
-      if (!res.ok) throw new Error(data.message || "Cập nhật mật khẩu thất bại.");
+      if (!res.ok)
+        throw new Error(data.message || "Cập nhật mật khẩu thất bại.");
 
       setMessage("Mật khẩu đã được cập nhật thành công!");
       setForm({ currentPassword: "", newPassword: "", confirmPassword: "" });

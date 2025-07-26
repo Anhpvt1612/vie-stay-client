@@ -13,7 +13,7 @@ import {
   Star,
   MoreVertical,
   Download,
-  RefreshCw
+  RefreshCw,
 } from "lucide-react";
 
 const AccommodationManagement = () => {
@@ -27,9 +27,9 @@ const AccommodationManagement = () => {
     total: 0,
     pending: 0,
     approved: 0,
-    rejected: 0
+    rejected: 0,
   });
-  
+
   // Filters and search
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");
@@ -49,39 +49,50 @@ const AccommodationManagement = () => {
   // API call function with auth headers
   const apiCall = async (endpoint, options = {}) => {
     const token = getAuthToken();
-    
+
     const defaultOptions = {
       headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${token}`,
-        ...options.headers
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+        ...options.headers,
       },
-      ...options
+      ...options,
     };
 
-    const response = await fetch(`https://vie-stay-server.vercel.app${endpoint}`, defaultOptions);
-    
+    const response = await fetch(
+      `https://vie-stay-server.onrender.com${endpoint}`,
+      defaultOptions
+    );
+
     if (!response.ok) {
       throw new Error(`API Error: ${response.status}`);
     }
-    
+
     return response.json();
   };
 
   useEffect(() => {
     fetchAccommodations();
-  }, [currentPage, statusFilter, typeFilter, districtFilter, searchTerm, sortBy, sortOrder]);
+  }, [
+    currentPage,
+    statusFilter,
+    typeFilter,
+    districtFilter,
+    searchTerm,
+    sortBy,
+    sortOrder,
+  ]);
 
   const fetchAccommodations = async () => {
     try {
       setLoading(true);
-      
+
       // Build query parameters
       const params = new URLSearchParams({
         page: currentPage,
         limit: itemsPerPage,
         sortBy,
-        order: sortOrder
+        order: sortOrder,
       });
 
       if (statusFilter !== "all") params.append("status", statusFilter);
@@ -90,8 +101,8 @@ const AccommodationManagement = () => {
       if (searchTerm) params.append("search", searchTerm);
 
       const response = await apiCall(`/admin/accommodations?${params}`);
-      
-      if (response.status === 'success') {
+
+      if (response.status === "success") {
         setAccommodations(response.data.accommodations);
         setStatistics(response.data.statistics);
       }
@@ -104,24 +115,31 @@ const AccommodationManagement = () => {
 
   const handleApprove = async (accommodationId) => {
     try {
-      const response = await apiCall(`/admin/accommodations/${accommodationId}/approve`, {
-        method: 'PATCH'
-      });
+      const response = await apiCall(
+        `/admin/accommodations/${accommodationId}/approve`,
+        {
+          method: "PATCH",
+        }
+      );
 
-      if (response.status === 'success') {
+      if (response.status === "success") {
         // Update local state
-        setAccommodations(prev => 
-          prev.map(acc => 
-            acc._id === accommodationId 
-              ? { ...acc, approvalStatus: "approved", approvedAt: new Date().toISOString() }
+        setAccommodations((prev) =>
+          prev.map((acc) =>
+            acc._id === accommodationId
+              ? {
+                  ...acc,
+                  approvalStatus: "approved",
+                  approvedAt: new Date().toISOString(),
+                }
               : acc
           )
         );
         // Update statistics
-        setStatistics(prev => ({
+        setStatistics((prev) => ({
           ...prev,
           pending: prev.pending - 1,
-          approved: prev.approved + 1
+          approved: prev.approved + 1,
         }));
       }
     } catch (error) {
@@ -136,28 +154,35 @@ const AccommodationManagement = () => {
         alert("Please provide a rejection reason");
         return;
       }
-      
-      const response = await apiCall(`/admin/accommodations/${selectedAccommodation._id}/reject`, {
-        method: 'PATCH',
-        body: JSON.stringify({ reason: rejectReason })
-      });
 
-      if (response.status === 'success') {
+      const response = await apiCall(
+        `/admin/accommodations/${selectedAccommodation._id}/reject`,
+        {
+          method: "PATCH",
+          body: JSON.stringify({ reason: rejectReason }),
+        }
+      );
+
+      if (response.status === "success") {
         // Update local state
-        setAccommodations(prev => 
-          prev.map(acc => 
-            acc._id === selectedAccommodation._id 
-              ? { ...acc, approvalStatus: "rejected", rejectionReason: rejectReason }
+        setAccommodations((prev) =>
+          prev.map((acc) =>
+            acc._id === selectedAccommodation._id
+              ? {
+                  ...acc,
+                  approvalStatus: "rejected",
+                  rejectionReason: rejectReason,
+                }
               : acc
           )
         );
         // Update statistics
-        setStatistics(prev => ({
+        setStatistics((prev) => ({
           ...prev,
           pending: prev.pending - 1,
-          rejected: prev.rejected + 1
+          rejected: prev.rejected + 1,
         }));
-        
+
         setShowRejectModal(false);
         setRejectReason("");
         setSelectedAccommodation(null);
@@ -169,32 +194,34 @@ const AccommodationManagement = () => {
   };
 
   const formatDate = (dateString) => {
-    return new Date(dateString).toLocaleDateString('vi-VN', {
-      day: '2-digit',
-      month: '2-digit',
-      year: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit'
+    return new Date(dateString).toLocaleDateString("vi-VN", {
+      day: "2-digit",
+      month: "2-digit",
+      year: "numeric",
+      hour: "2-digit",
+      minute: "2-digit",
     });
   };
 
   const getStatusBadge = (status) => {
     const badges = {
       pending: "bg-yellow-100 text-yellow-800",
-      approved: "bg-green-100 text-green-800", 
-      rejected: "bg-red-100 text-red-800"
+      approved: "bg-green-100 text-green-800",
+      rejected: "bg-red-100 text-red-800",
     };
-    
+
     const icons = {
       pending: Clock,
       approved: CheckCircle,
-      rejected: XCircle
+      rejected: XCircle,
     };
 
     const Icon = icons[status];
-    
+
     return (
-      <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${badges[status]}`}>
+      <span
+        className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${badges[status]}`}
+      >
         <Icon className="w-3 h-3 mr-1" />
         {status.charAt(0).toUpperCase() + status.slice(1)}
       </span>
@@ -208,7 +235,7 @@ const AccommodationManagement = () => {
     { value: "hostel", label: "Hostel" },
     { value: "hotel", label: "Hotel" },
     { value: "villa", label: "Villa" },
-    { value: "duplex", label: "Duplex" }
+    { value: "duplex", label: "Duplex" },
   ];
 
   const districts = [
@@ -218,7 +245,7 @@ const AccommodationManagement = () => {
     { value: "Quận Sơn Trà", label: "Quận Sơn Trà" },
     { value: "Quận Ngũ Hành Sơn", label: "Quận Ngũ Hành Sơn" },
     { value: "Quận Liên Chiểu", label: "Quận Liên Chiểu" },
-    { value: "Quận Cẩm Lệ", label: "Quận Cẩm Lệ" }
+    { value: "Quận Cẩm Lệ", label: "Quận Cẩm Lệ" },
   ];
 
   return (
@@ -226,8 +253,12 @@ const AccommodationManagement = () => {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">Accommodation Management</h1>
-          <p className="text-gray-600">Review and manage accommodation submissions</p>
+          <h1 className="text-2xl font-bold text-gray-900">
+            Accommodation Management
+          </h1>
+          <p className="text-gray-600">
+            Review and manage accommodation submissions
+          </p>
         </div>
         <div className="flex items-center space-x-3">
           <button
@@ -251,7 +282,9 @@ const AccommodationManagement = () => {
             <Building2 className="w-8 h-8 text-blue-600" />
             <div className="ml-3">
               <p className="text-sm font-medium text-gray-600">Total</p>
-              <p className="text-xl font-bold text-gray-900">{statistics.total}</p>
+              <p className="text-xl font-bold text-gray-900">
+                {statistics.total}
+              </p>
             </div>
           </div>
         </div>
@@ -260,7 +293,9 @@ const AccommodationManagement = () => {
             <Clock className="w-8 h-8 text-yellow-600" />
             <div className="ml-3">
               <p className="text-sm font-medium text-gray-600">Pending</p>
-              <p className="text-xl font-bold text-gray-900">{statistics.pending}</p>
+              <p className="text-xl font-bold text-gray-900">
+                {statistics.pending}
+              </p>
             </div>
           </div>
         </div>
@@ -269,7 +304,9 @@ const AccommodationManagement = () => {
             <CheckCircle className="w-8 h-8 text-green-600" />
             <div className="ml-3">
               <p className="text-sm font-medium text-gray-600">Approved</p>
-              <p className="text-xl font-bold text-gray-900">{statistics.approved}</p>
+              <p className="text-xl font-bold text-gray-900">
+                {statistics.approved}
+              </p>
             </div>
           </div>
         </div>
@@ -278,7 +315,9 @@ const AccommodationManagement = () => {
             <XCircle className="w-8 h-8 text-red-600" />
             <div className="ml-3">
               <p className="text-sm font-medium text-gray-600">Rejected</p>
-              <p className="text-xl font-bold text-gray-900">{statistics.rejected}</p>
+              <p className="text-xl font-bold text-gray-900">
+                {statistics.rejected}
+              </p>
             </div>
           </div>
         </div>
@@ -300,7 +339,7 @@ const AccommodationManagement = () => {
               />
             </div>
           </div>
-          
+
           {/* Status Filter */}
           <select
             value={statusFilter}
@@ -319,8 +358,10 @@ const AccommodationManagement = () => {
             onChange={(e) => setTypeFilter(e.target.value)}
             className="border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
           >
-            {accommodationTypes.map(type => (
-              <option key={type.value} value={type.value}>{type.label}</option>
+            {accommodationTypes.map((type) => (
+              <option key={type.value} value={type.value}>
+                {type.label}
+              </option>
             ))}
           </select>
 
@@ -330,8 +371,10 @@ const AccommodationManagement = () => {
             onChange={(e) => setDistrictFilter(e.target.value)}
             className="border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
           >
-            {districts.map(district => (
-              <option key={district.value} value={district.value}>{district.label}</option>
+            {districts.map((district) => (
+              <option key={district.value} value={district.value}>
+                {district.label}
+              </option>
             ))}
           </select>
         </div>
@@ -374,7 +417,10 @@ const AccommodationManagement = () => {
                     <td className="px-6 py-4 whitespace-nowrap">
                       <div className="flex items-center">
                         <img
-                          src={accommodation.images?.[0] || "https://via.placeholder.com/48x48"}
+                          src={
+                            accommodation.images?.[0] ||
+                            "https://via.placeholder.com/48x48"
+                          }
                           alt={accommodation.name}
                           className="w-12 h-12 rounded-lg object-cover"
                         />
@@ -389,16 +435,20 @@ const AccommodationManagement = () => {
                       </div>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
-                      <div className="text-sm text-gray-900">{accommodation.ownerId?.name || 'N/A'}</div>
-                      <div className="text-sm text-gray-500">{accommodation.ownerId?.email || 'N/A'}</div>
+                      <div className="text-sm text-gray-900">
+                        {accommodation.ownerId?.name || "N/A"}
+                      </div>
+                      <div className="text-sm text-gray-500">
+                        {accommodation.ownerId?.email || "N/A"}
+                      </div>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
                       <div className="text-sm text-gray-900 capitalize">
-                        {accommodation.type?.replace('_', ' ') || 'N/A'}
+                        {accommodation.type?.replace("_", " ") || "N/A"}
                       </div>
                       <div className="text-sm text-gray-500 flex items-center">
                         <MapPin className="w-3 h-3 mr-1" />
-                        {accommodation.address?.district || 'N/A'}
+                        {accommodation.address?.district || "N/A"}
                       </div>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
@@ -412,7 +462,9 @@ const AccommodationManagement = () => {
                         <div className="flex items-center">
                           <Star className="w-4 h-4 text-yellow-400 mr-1" />
                           <span>{accommodation.averageRating.toFixed(1)}</span>
-                          <span className="ml-1">({accommodation.totalReviews || 0})</span>
+                          <span className="ml-1">
+                            ({accommodation.totalReviews || 0})
+                          </span>
                         </div>
                       ) : (
                         <span className="text-gray-400">No reviews</span>
@@ -430,8 +482,8 @@ const AccommodationManagement = () => {
                         >
                           <Eye className="w-4 h-4" />
                         </button>
-                        
-                        {accommodation.approvalStatus === 'pending' && (
+
+                        {accommodation.approvalStatus === "pending" && (
                           <>
                             <button
                               onClick={() => handleApprove(accommodation._id)}
@@ -464,8 +516,12 @@ const AccommodationManagement = () => {
         {accommodations.length === 0 && !loading && (
           <div className="text-center py-12">
             <Building2 className="mx-auto h-12 w-12 text-gray-400" />
-            <h3 className="mt-2 text-sm font-medium text-gray-900">No accommodations found</h3>
-            <p className="mt-1 text-sm text-gray-500">Try adjusting your search or filter criteria.</p>
+            <h3 className="mt-2 text-sm font-medium text-gray-900">
+              No accommodations found
+            </h3>
+            <p className="mt-1 text-sm text-gray-500">
+              Try adjusting your search or filter criteria.
+            </p>
           </div>
         )}
       </div>
@@ -483,30 +539,61 @@ const AccommodationManagement = () => {
                 <XCircle className="w-6 h-6" />
               </button>
             </div>
-            
+
             <div className="p-6 space-y-6">
               {/* Basic Info */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
-                  <h4 className="font-semibold text-gray-900 mb-3">Basic Information</h4>
+                  <h4 className="font-semibold text-gray-900 mb-3">
+                    Basic Information
+                  </h4>
                   <div className="space-y-2">
-                    <p><span className="font-medium">Name:</span> {selectedAccommodation.name}</p>
-                    <p><span className="font-medium">Type:</span> {selectedAccommodation.type?.replace('_', ' ') || 'N/A'}</p>
-                    <p><span className="font-medium">Total Rooms:</span> {selectedAccommodation.totalRooms || 0}</p>
-                    <p><span className="font-medium">Status:</span> {getStatusBadge(selectedAccommodation.approvalStatus)}</p>
-                    <p><span className="font-medium">Created:</span> {formatDate(selectedAccommodation.createdAt)}</p>
+                    <p>
+                      <span className="font-medium">Name:</span>{" "}
+                      {selectedAccommodation.name}
+                    </p>
+                    <p>
+                      <span className="font-medium">Type:</span>{" "}
+                      {selectedAccommodation.type?.replace("_", " ") || "N/A"}
+                    </p>
+                    <p>
+                      <span className="font-medium">Total Rooms:</span>{" "}
+                      {selectedAccommodation.totalRooms || 0}
+                    </p>
+                    <p>
+                      <span className="font-medium">Status:</span>{" "}
+                      {getStatusBadge(selectedAccommodation.approvalStatus)}
+                    </p>
+                    <p>
+                      <span className="font-medium">Created:</span>{" "}
+                      {formatDate(selectedAccommodation.createdAt)}
+                    </p>
                     {selectedAccommodation.description && (
-                      <p><span className="font-medium">Description:</span> {selectedAccommodation.description}</p>
+                      <p>
+                        <span className="font-medium">Description:</span>{" "}
+                        {selectedAccommodation.description}
+                      </p>
                     )}
                   </div>
                 </div>
-                
+
                 <div>
-                  <h4 className="font-semibold text-gray-900 mb-3">Owner Information</h4>
+                  <h4 className="font-semibold text-gray-900 mb-3">
+                    Owner Information
+                  </h4>
                   <div className="space-y-2">
-                    <p><span className="font-medium">Name:</span> {selectedAccommodation.ownerId?.name || 'N/A'}</p>
-                    <p><span className="font-medium">Email:</span> {selectedAccommodation.ownerId?.email || 'N/A'}</p>
-                    <p><span className="font-medium">Phone:</span> {selectedAccommodation.ownerId?.phoneNumber || 'N/A'}</p>
+                    <p>
+                      <span className="font-medium">Name:</span>{" "}
+                      {selectedAccommodation.ownerId?.name || "N/A"}
+                    </p>
+                    <p>
+                      <span className="font-medium">Email:</span>{" "}
+                      {selectedAccommodation.ownerId?.email || "N/A"}
+                    </p>
+                    <p>
+                      <span className="font-medium">Phone:</span>{" "}
+                      {selectedAccommodation.ownerId?.phoneNumber || "N/A"}
+                    </p>
                   </div>
                 </div>
               </div>
@@ -514,36 +601,42 @@ const AccommodationManagement = () => {
               {/* Address */}
               <div>
                 <h4 className="font-semibold text-gray-900 mb-3">Address</h4>
-                <p>{selectedAccommodation.address?.fullAddress || 'N/A'}</p>
+                <p>{selectedAccommodation.address?.fullAddress || "N/A"}</p>
               </div>
 
               {/* Images */}
-              {selectedAccommodation.images && selectedAccommodation.images.length > 0 && (
-                <div>
-                  <h4 className="font-semibold text-gray-900 mb-3">Images</h4>
-                  <div className="grid grid-cols-3 gap-4">
-                    {selectedAccommodation.images.map((image, index) => (
-                      <img
-                        key={index}
-                        src={image}
-                        alt={`Image ${index + 1}`}
-                        className="w-full h-32 object-cover rounded-lg"
-                      />
-                    ))}
+              {selectedAccommodation.images &&
+                selectedAccommodation.images.length > 0 && (
+                  <div>
+                    <h4 className="font-semibold text-gray-900 mb-3">Images</h4>
+                    <div className="grid grid-cols-3 gap-4">
+                      {selectedAccommodation.images.map((image, index) => (
+                        <img
+                          key={index}
+                          src={image}
+                          alt={`Image ${index + 1}`}
+                          className="w-full h-32 object-cover rounded-lg"
+                        />
+                      ))}
+                    </div>
                   </div>
-                </div>
-              )}
+                )}
 
               {/* Rejection Reason */}
-              {selectedAccommodation.approvalStatus === 'rejected' && selectedAccommodation.rejectionReason && (
-                <div>
-                  <h4 className="font-semibold text-gray-900 mb-3">Rejection Reason</h4>
-                  <p className="text-red-600">{selectedAccommodation.rejectionReason}</p>
-                </div>
-              )}
+              {selectedAccommodation.approvalStatus === "rejected" &&
+                selectedAccommodation.rejectionReason && (
+                  <div>
+                    <h4 className="font-semibold text-gray-900 mb-3">
+                      Rejection Reason
+                    </h4>
+                    <p className="text-red-600">
+                      {selectedAccommodation.rejectionReason}
+                    </p>
+                  </div>
+                )}
 
               {/* Action Buttons */}
-              {selectedAccommodation.approvalStatus === 'pending' && (
+              {selectedAccommodation.approvalStatus === "pending" && (
                 <div className="flex items-center space-x-4 pt-4 border-t">
                   <button
                     onClick={() => {
@@ -577,10 +670,11 @@ const AccommodationManagement = () => {
             <div className="px-6 py-4 border-b border-gray-200">
               <h3 className="text-lg font-semibold">Reject Accommodation</h3>
             </div>
-            
+
             <div className="p-6">
               <p className="text-gray-600 mb-4">
-                Please provide a reason for rejecting "{selectedAccommodation.name}":
+                Please provide a reason for rejecting "
+                {selectedAccommodation.name}":
               </p>
               <textarea
                 value={rejectReason}
@@ -590,7 +684,7 @@ const AccommodationManagement = () => {
                 rows={4}
               />
             </div>
-            
+
             <div className="px-6 py-4 border-t border-gray-200 flex items-center justify-end space-x-3">
               <button
                 onClick={() => {

@@ -1,7 +1,8 @@
 import React from "react";
 
-const DEFAULT_AVATAR = "https://ui-avatars.com/api/?name=User&background=random";
-const IMAGE_BASE_URL = "https://vie-stay-server.vercel.app"; // Domain backend
+const DEFAULT_AVATAR =
+  "https://ui-avatars.com/api/?name=User&background=random";
+const IMAGE_BASE_URL = "https://vie-stay-server.onrender.com"; // Domain backend
 
 export default function ProfileAvatar({ value, onChange, error }) {
   let avatarSrc = DEFAULT_AVATAR;
@@ -19,12 +20,14 @@ export default function ProfileAvatar({ value, onChange, error }) {
 
   return (
     <div className="flex flex-col items-center w-full gap-4">
-      <label className="font-semibold text-gray-700 mb-1 text-xl">Ảnh đại diện</label>
+      <label className="font-semibold text-gray-700 mb-1 text-xl">
+        Ảnh đại diện
+      </label>
       <div className="w-full flex flex-col items-center gap-2">
         <input
           type="file"
           accept="image/*"
-          onChange={e => onChange(e.target.files[0])}
+          onChange={(e) => onChange(e.target.files[0])}
           className="file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100 max-w-[180px]"
         />
       </div>

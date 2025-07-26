@@ -12,27 +12,41 @@ import {
   Star,
   MapPin,
   Eye,
-  Filter
+  Filter,
 } from "lucide-react";
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, BarChart, Bar, PieChart, Pie, Cell } from "recharts";
+import {
+  LineChart,
+  Line,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  Legend,
+  ResponsiveContainer,
+  BarChart,
+  Bar,
+  PieChart,
+  Pie,
+  Cell,
+} from "recharts";
 
 const RevenueReports = () => {
   const [loading, setLoading] = useState(false);
-  const [selectedPeriod, setSelectedPeriod] = useState('month');
+  const [selectedPeriod, setSelectedPeriod] = useState("month");
   const [dateRange, setDateRange] = useState({
-    startDate: '2024-01-01',
-    endDate: '2024-12-31'
+    startDate: "2024-01-01",
+    endDate: "2024-12-31",
   });
   const [revenueData, setRevenueData] = useState({
     statistics: {
       totalAccommodations: 0,
       approvedAccommodations: 0,
       avgRating: 0,
-      totalRooms: 0
+      totalRooms: 0,
     },
     monthlyTrend: [],
     topAccommodations: [],
-    districtStats: []
+    districtStats: [],
   });
 
   // Get auth token from localStorage
@@ -43,22 +57,25 @@ const RevenueReports = () => {
   // API call function with auth headers
   const apiCall = async (endpoint, options = {}) => {
     const token = getAuthToken();
-    
+
     const defaultOptions = {
       headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${token}`,
-        ...options.headers
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+        ...options.headers,
       },
-      ...options
+      ...options,
     };
 
-    const response = await fetch(`https://vie-stay-server.vercel.app${endpoint}`, defaultOptions);
-    
+    const response = await fetch(
+      `https://vie-stay-server.onrender.com${endpoint}`,
+      defaultOptions
+    );
+
     if (!response.ok) {
       throw new Error(`API Error: ${response.status}`);
     }
-    
+
     return response.json();
   };
 
@@ -69,16 +86,16 @@ const RevenueReports = () => {
   const fetchRevenueData = async () => {
     try {
       setLoading(true);
-      
+
       const params = new URLSearchParams({
         period: selectedPeriod,
         startDate: dateRange.startDate,
-        endDate: dateRange.endDate
+        endDate: dateRange.endDate,
       });
 
       const response = await apiCall(`/admin/revenue-report?${params}`);
-      
-      if (response.status === 'success') {
+
+      if (response.status === "success") {
         setRevenueData(response.data);
       }
     } catch (error) {
@@ -89,62 +106,87 @@ const RevenueReports = () => {
   };
 
   const formatCurrency = (amount) => {
-    return new Intl.NumberFormat('vi-VN', {
-      style: 'currency',
-      currency: 'VND'
+    return new Intl.NumberFormat("vi-VN", {
+      style: "currency",
+      currency: "VND",
     }).format(amount);
   };
 
   const formatNumber = (num) => {
-    return new Intl.NumberFormat('vi-VN').format(num);
+    return new Intl.NumberFormat("vi-VN").format(num);
   };
 
   const calculateGrowthRate = (current, previous) => {
     if (previous === 0) return 0;
-    return ((current - previous) / previous * 100).toFixed(1);
+    return (((current - previous) / previous) * 100).toFixed(1);
   };
 
   // Transform district data for charts
-  const transformedDistrictData = revenueData.districtStats.map(district => ({
-    district: district._id || 'Unknown',
+  const transformedDistrictData = revenueData.districtStats.map((district) => ({
+    district: district._id || "Unknown",
     accommodations: district.accommodationCount || 0,
     rooms: district.totalRooms || 0,
     avgRating: district.avgRating || 0,
     // Mock revenue calculation - replace with actual revenue data when available
-    revenue: (district.accommodationCount || 0) * 50000000
+    revenue: (district.accommodationCount || 0) * 50000000,
   }));
 
   // Transform monthly trend data for charts
-  const transformedMonthlyData = revenueData.monthlyTrend.map(item => ({
+  const transformedMonthlyData = revenueData.monthlyTrend.map((item) => ({
     month: `${item._id?.month || 1}/${item._id?.year || 2024}`,
     accommodations: item.accommodationsAdded || 0,
     rooms: item.totalRooms || 0,
     // Mock revenue calculation
-    revenue: (item.estimatedRevenue || item.totalRooms * 50000) || 0
+    revenue: item.estimatedRevenue || item.totalRooms * 50000 || 0,
   }));
 
   // Calculate summary statistics
-  const totalRevenue = transformedMonthlyData.reduce((sum, item) => sum + item.revenue, 0);
-  const avgMonthlyRevenue = transformedMonthlyData.length > 0 ? totalRevenue / transformedMonthlyData.length : 0;
-  const currentMonth = transformedMonthlyData[transformedMonthlyData.length - 1];
-  const previousMonth = transformedMonthlyData[transformedMonthlyData.length - 2];
-  const revenueGrowth = currentMonth && previousMonth 
-    ? calculateGrowthRate(currentMonth.revenue, previousMonth.revenue)
-    : 0;
+  const totalRevenue = transformedMonthlyData.reduce(
+    (sum, item) => sum + item.revenue,
+    0
+  );
+  const avgMonthlyRevenue =
+    transformedMonthlyData.length > 0
+      ? totalRevenue / transformedMonthlyData.length
+      : 0;
+  const currentMonth =
+    transformedMonthlyData[transformedMonthlyData.length - 1];
+  const previousMonth =
+    transformedMonthlyData[transformedMonthlyData.length - 2];
+  const revenueGrowth =
+    currentMonth && previousMonth
+      ? calculateGrowthRate(currentMonth.revenue, previousMonth.revenue)
+      : 0;
 
-  const StatCard = ({ title, value, icon: Icon, color, trend, trendValue, subtitle }) => (
+  const StatCard = ({
+    title,
+    value,
+    icon: Icon,
+    color,
+    trend,
+    trendValue,
+    subtitle,
+  }) => (
     <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
       <div className="flex items-center justify-between">
         <div className="flex-1">
           <p className="text-sm font-medium text-gray-600">{title}</p>
-          <p className="text-2xl font-bold text-gray-900 mt-1">{typeof value === 'number' ? value.toLocaleString() : value}</p>
+          <p className="text-2xl font-bold text-gray-900 mt-1">
+            {typeof value === "number" ? value.toLocaleString() : value}
+          </p>
           {subtitle && <p className="text-xs text-gray-500 mt-1">{subtitle}</p>}
           {trend && (
-            <div className={`flex items-center mt-2 text-sm ${
-              trend === 'up' ? 'text-green-600' : trend === 'down' ? 'text-red-600' : 'text-gray-600'
-            }`}>
-              {trend === 'up' && <TrendingUp className="h-4 w-4 mr-1" />}
-              {trend === 'down' && <TrendingDown className="h-4 w-4 mr-1" />}
+            <div
+              className={`flex items-center mt-2 text-sm ${
+                trend === "up"
+                  ? "text-green-600"
+                  : trend === "down"
+                  ? "text-red-600"
+                  : "text-gray-600"
+              }`}
+            >
+              {trend === "up" && <TrendingUp className="h-4 w-4 mr-1" />}
+              {trend === "down" && <TrendingDown className="h-4 w-4 mr-1" />}
               <span>{trendValue}</span>
             </div>
           )}
@@ -182,7 +224,7 @@ const RevenueReports = () => {
             <option value="quarter">Quarterly</option>
             <option value="year">Yearly</option>
           </select>
-          <button 
+          <button
             onClick={fetchRevenueData}
             className="flex items-center px-4 py-2 text-sm bg-white border border-gray-300 rounded-lg hover:bg-gray-50"
           >
@@ -203,7 +245,7 @@ const RevenueReports = () => {
           value={formatCurrency(totalRevenue)}
           icon={DollarSign}
           color="bg-green-500"
-          trend={revenueGrowth > 0 ? 'up' : revenueGrowth < 0 ? 'down' : null}
+          trend={revenueGrowth > 0 ? "up" : revenueGrowth < 0 ? "down" : null}
           trendValue={`${revenueGrowth}% vs last month`}
         />
         <StatCard
@@ -222,7 +264,11 @@ const RevenueReports = () => {
         />
         <StatCard
           title="Avg Rating"
-          value={revenueData.statistics.avgRating ? revenueData.statistics.avgRating.toFixed(1) : "N/A"}
+          value={
+            revenueData.statistics.avgRating
+              ? revenueData.statistics.avgRating.toFixed(1)
+              : "N/A"
+          }
           icon={Star}
           color="bg-yellow-500"
           subtitle="Across all properties"
@@ -234,7 +280,9 @@ const RevenueReports = () => {
         {/* Revenue Trend Chart */}
         <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
           <div className="flex items-center justify-between mb-6">
-            <h3 className="text-lg font-semibold text-gray-900">Revenue Trend</h3>
+            <h3 className="text-lg font-semibold text-gray-900">
+              Revenue Trend
+            </h3>
             <div className="flex items-center space-x-2 text-sm text-gray-500">
               <Calendar className="w-4 h-4" />
               <span>2024</span>
@@ -243,25 +291,22 @@ const RevenueReports = () => {
           <ResponsiveContainer width="100%" height={300}>
             <LineChart data={transformedMonthlyData}>
               <CartesianGrid strokeDasharray="3 3" />
-              <XAxis 
-                dataKey="month" 
-                tick={{ fontSize: 12 }}
-              />
-              <YAxis 
+              <XAxis dataKey="month" tick={{ fontSize: 12 }} />
+              <YAxis
                 tick={{ fontSize: 12 }}
                 tickFormatter={(value) => `${(value / 1000000).toFixed(0)}M`}
               />
-              <Tooltip 
-                formatter={(value) => [formatCurrency(value), 'Revenue']}
+              <Tooltip
+                formatter={(value) => [formatCurrency(value), "Revenue"]}
                 labelFormatter={(label) => `Month: ${label}`}
               />
               <Legend />
-              <Line 
-                type="monotone" 
-                dataKey="revenue" 
-                stroke="#3b82f6" 
+              <Line
+                type="monotone"
+                dataKey="revenue"
+                stroke="#3b82f6"
                 strokeWidth={3}
-                dot={{ fill: '#3b82f6', strokeWidth: 2, r: 4 }}
+                dot={{ fill: "#3b82f6", strokeWidth: 2, r: 4 }}
                 activeDot={{ r: 6 }}
               />
             </LineChart>
@@ -270,20 +315,21 @@ const RevenueReports = () => {
 
         {/* Accommodations Growth */}
         <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-          <h3 className="text-lg font-semibold text-gray-900 mb-6">Accommodations Growth</h3>
+          <h3 className="text-lg font-semibold text-gray-900 mb-6">
+            Accommodations Growth
+          </h3>
           <ResponsiveContainer width="100%" height={300}>
             <BarChart data={transformedMonthlyData}>
               <CartesianGrid strokeDasharray="3 3" />
-              <XAxis 
-                dataKey="month" 
-                tick={{ fontSize: 12 }}
-              />
-              <YAxis 
-                tick={{ fontSize: 12 }}
-              />
+              <XAxis dataKey="month" tick={{ fontSize: 12 }} />
+              <YAxis tick={{ fontSize: 12 }} />
               <Tooltip />
               <Legend />
-              <Bar dataKey="accommodations" fill="#10b981" name="New Accommodations" />
+              <Bar
+                dataKey="accommodations"
+                fill="#10b981"
+                name="New Accommodations"
+              />
             </BarChart>
           </ResponsiveContainer>
         </div>
@@ -291,36 +337,50 @@ const RevenueReports = () => {
 
       {/* District Performance */}
       <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-        <h3 className="text-lg font-semibold text-gray-900 mb-6">Performance by District</h3>
+        <h3 className="text-lg font-semibold text-gray-900 mb-6">
+          Performance by District
+        </h3>
         <ResponsiveContainer width="100%" height={400}>
           <BarChart data={transformedDistrictData}>
             <CartesianGrid strokeDasharray="3 3" />
-            <XAxis 
-              dataKey="district" 
+            <XAxis
+              dataKey="district"
               tick={{ fontSize: 12 }}
-              tickFormatter={(value) => value.replace('Quận ', '')}
+              tickFormatter={(value) => value.replace("Quận ", "")}
             />
-            <YAxis 
+            <YAxis
               yAxisId="left"
               tick={{ fontSize: 12 }}
               tickFormatter={(value) => `${(value / 1000000).toFixed(0)}M`}
             />
-            <YAxis 
-              yAxisId="right" 
+            <YAxis
+              yAxisId="right"
               orientation="right"
               tick={{ fontSize: 12 }}
             />
-            <Tooltip 
+            <Tooltip
               formatter={(value, name) => {
-                if (name === 'revenue') return [formatCurrency(value), 'Estimated Revenue'];
-                if (name === 'accommodations') return [value, 'Properties'];
-                if (name === 'avgRating') return [value.toFixed(1), 'Avg Rating'];
+                if (name === "revenue")
+                  return [formatCurrency(value), "Estimated Revenue"];
+                if (name === "accommodations") return [value, "Properties"];
+                if (name === "avgRating")
+                  return [value.toFixed(1), "Avg Rating"];
                 return [value, name];
               }}
             />
             <Legend />
-            <Bar yAxisId="left" dataKey="revenue" fill="#3b82f6" name="revenue" />
-            <Bar yAxisId="right" dataKey="accommodations" fill="#10b981" name="accommodations" />
+            <Bar
+              yAxisId="left"
+              dataKey="revenue"
+              fill="#3b82f6"
+              name="revenue"
+            />
+            <Bar
+              yAxisId="right"
+              dataKey="accommodations"
+              fill="#10b981"
+              name="accommodations"
+            />
           </BarChart>
         </ResponsiveContainer>
       </div>
@@ -328,7 +388,9 @@ const RevenueReports = () => {
       {/* Top Performing Accommodations */}
       <div className="bg-white rounded-lg shadow-sm border border-gray-200">
         <div className="px-6 py-4 border-b border-gray-200">
-          <h3 className="text-lg font-semibold text-gray-900">Top Performing Accommodations</h3>
+          <h3 className="text-lg font-semibold text-gray-900">
+            Top Performing Accommodations
+          </h3>
         </div>
         <div className="overflow-x-auto">
           <table className="min-w-full divide-y divide-gray-200">
@@ -367,7 +429,7 @@ const RevenueReports = () => {
                             {accommodation.name}
                           </div>
                           <div className="text-sm text-gray-500 capitalize">
-                            {accommodation.type?.replace('_', ' ') || 'N/A'}
+                            {accommodation.type?.replace("_", " ") || "N/A"}
                           </div>
                         </div>
                       </div>
@@ -375,7 +437,7 @@ const RevenueReports = () => {
                     <td className="px-6 py-4 whitespace-nowrap">
                       <div className="flex items-center text-sm text-gray-900">
                         <MapPin className="w-4 h-4 mr-1 text-gray-400" />
-                        {accommodation.address?.district || 'N/A'}
+                        {accommodation.address?.district || "N/A"}
                       </div>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
@@ -387,7 +449,7 @@ const RevenueReports = () => {
                       <div className="flex items-center">
                         <Star className="w-4 h-4 text-yellow-400 mr-1" />
                         <span className="text-sm font-medium text-gray-900">
-                          {accommodation.averageRating?.toFixed(1) || 'N/A'}
+                          {accommodation.averageRating?.toFixed(1) || "N/A"}
                         </span>
                         <span className="text-sm text-gray-500 ml-1">
                           ({accommodation.totalReviews || 0})
@@ -403,7 +465,10 @@ const RevenueReports = () => {
                 ))
               ) : (
                 <tr>
-                  <td colSpan="5" className="px-6 py-8 text-center text-gray-500">
+                  <td
+                    colSpan="5"
+                    className="px-6 py-8 text-center text-gray-500"
+                  >
                     <Building2 className="h-8 w-8 mx-auto mb-2 text-gray-400" />
                     <p>No accommodation data available</p>
                   </td>
@@ -418,24 +483,34 @@ const RevenueReports = () => {
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Growth Insights */}
         <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-          <h4 className="text-lg font-semibold text-gray-900 mb-4">Growth Insights</h4>
+          <h4 className="text-lg font-semibold text-gray-900 mb-4">
+            Growth Insights
+          </h4>
           <div className="space-y-4">
             <div className="flex items-center justify-between">
               <span className="text-sm text-gray-600">Total Properties</span>
-              <span className="text-sm font-medium">{revenueData.statistics.totalAccommodations}</span>
+              <span className="text-sm font-medium">
+                {revenueData.statistics.totalAccommodations}
+              </span>
             </div>
             <div className="flex items-center justify-between">
               <span className="text-sm text-gray-600">Approved Properties</span>
-              <span className="text-sm font-medium text-green-600">{revenueData.statistics.approvedAccommodations}</span>
+              <span className="text-sm font-medium text-green-600">
+                {revenueData.statistics.approvedAccommodations}
+              </span>
             </div>
             <div className="flex items-center justify-between">
               <span className="text-sm text-gray-600">Total Rooms</span>
-              <span className="text-sm font-medium">{revenueData.statistics.totalRooms}</span>
+              <span className="text-sm font-medium">
+                {revenueData.statistics.totalRooms}
+              </span>
             </div>
             <div className="flex items-center justify-between">
               <span className="text-sm text-gray-600">Avg. Rating</span>
               <span className="text-sm font-medium text-yellow-600">
-                {revenueData.statistics.avgRating ? revenueData.statistics.avgRating.toFixed(1) : 'N/A'}
+                {revenueData.statistics.avgRating
+                  ? revenueData.statistics.avgRating.toFixed(1)
+                  : "N/A"}
               </span>
             </div>
           </div>
@@ -443,54 +518,78 @@ const RevenueReports = () => {
 
         {/* District Overview */}
         <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-          <h4 className="text-lg font-semibold text-gray-900 mb-4">District Overview</h4>
+          <h4 className="text-lg font-semibold text-gray-900 mb-4">
+            District Overview
+          </h4>
           <div className="space-y-4">
             {transformedDistrictData.slice(0, 4).map((district, index) => (
-              <div key={district.district} className="flex items-center justify-between">
+              <div
+                key={district.district}
+                className="flex items-center justify-between"
+              >
                 <div className="flex items-center">
-                  <div 
-                    className="w-3 h-3 rounded-full mr-2" 
+                  <div
+                    className="w-3 h-3 rounded-full mr-2"
                     style={{ backgroundColor: `hsl(${index * 60}, 70%, 50%)` }}
                   ></div>
                   <span className="text-sm text-gray-600">
-                    {district.district.replace('Quận ', '')}
+                    {district.district.replace("Quận ", "")}
                   </span>
                 </div>
-                <span className="text-sm font-medium">{district.accommodations}</span>
+                <span className="text-sm font-medium">
+                  {district.accommodations}
+                </span>
               </div>
             ))}
             {transformedDistrictData.length === 0 && (
-              <p className="text-sm text-gray-500">No district data available</p>
+              <p className="text-sm text-gray-500">
+                No district data available
+              </p>
             )}
           </div>
         </div>
 
         {/* Key Metrics */}
         <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-          <h4 className="text-lg font-semibold text-gray-900 mb-4">Key Metrics</h4>
+          <h4 className="text-lg font-semibold text-gray-900 mb-4">
+            Key Metrics
+          </h4>
           <div className="space-y-4">
             <div className="flex items-center justify-between">
-              <span className="text-sm text-gray-600">Platform commission (5%)</span>
-              <span className="text-sm font-medium">{formatCurrency(totalRevenue * 0.05)}</span>
+              <span className="text-sm text-gray-600">
+                Platform commission (5%)
+              </span>
+              <span className="text-sm font-medium">
+                {formatCurrency(totalRevenue * 0.05)}
+              </span>
             </div>
             <div className="flex items-center justify-between">
-              <span className="text-sm text-gray-600">Avg. revenue/property</span>
+              <span className="text-sm text-gray-600">
+                Avg. revenue/property
+              </span>
               <span className="text-sm font-medium">
-                {revenueData.statistics.totalAccommodations > 0 
-                  ? formatCurrency(totalRevenue / revenueData.statistics.totalAccommodations)
-                  : formatCurrency(0)
-                }
+                {revenueData.statistics.totalAccommodations > 0
+                  ? formatCurrency(
+                      totalRevenue / revenueData.statistics.totalAccommodations
+                    )
+                  : formatCurrency(0)}
               </span>
             </div>
             <div className="flex items-center justify-between">
               <span className="text-sm text-gray-600">Growth rate</span>
-              <span className={`text-sm font-medium ${revenueGrowth >= 0 ? 'text-green-600' : 'text-red-600'}`}>
+              <span
+                className={`text-sm font-medium ${
+                  revenueGrowth >= 0 ? "text-green-600" : "text-red-600"
+                }`}
+              >
                 {revenueGrowth}%
               </span>
             </div>
             <div className="flex items-center justify-between">
               <span className="text-sm text-gray-600">Active districts</span>
-              <span className="text-sm font-medium">{transformedDistrictData.length}</span>
+              <span className="text-sm font-medium">
+                {transformedDistrictData.length}
+              </span>
             </div>
           </div>
         </div>
@@ -498,23 +597,33 @@ const RevenueReports = () => {
 
       {/* Date Range Filter */}
       <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-        <h4 className="text-lg font-semibold text-gray-900 mb-4">Custom Date Range</h4>
+        <h4 className="text-lg font-semibold text-gray-900 mb-4">
+          Custom Date Range
+        </h4>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Start Date</label>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              Start Date
+            </label>
             <input
               type="date"
               value={dateRange.startDate}
-              onChange={(e) => setDateRange(prev => ({ ...prev, startDate: e.target.value }))}
+              onChange={(e) =>
+                setDateRange((prev) => ({ ...prev, startDate: e.target.value }))
+              }
               className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">End Date</label>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              End Date
+            </label>
             <input
               type="date"
               value={dateRange.endDate}
-              onChange={(e) => setDateRange(prev => ({ ...prev, endDate: e.target.value }))}
+              onChange={(e) =>
+                setDateRange((prev) => ({ ...prev, endDate: e.target.value }))
+              }
               className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
             />
           </div>
@@ -531,7 +640,9 @@ const RevenueReports = () => {
 
       {/* Export Options */}
       <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-        <h4 className="text-lg font-semibold text-gray-900 mb-4">Export Reports</h4>
+        <h4 className="text-lg font-semibold text-gray-900 mb-4">
+          Export Reports
+        </h4>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           <button className="flex items-center justify-center px-4 py-3 border border-gray-300 rounded-lg hover:bg-gray-50">
             <Download className="w-4 h-4 mr-2" />

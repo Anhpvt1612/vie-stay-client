@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Toaster, toast } from 'react-hot-toast'; // Thêm toast
+import { Toaster, toast } from "react-hot-toast"; // Thêm toast
 import { useLocation, useParams, useNavigate } from "react-router-dom";
 import { formatCurrencyVND } from "../../../utils/FormatPricePrint";
 import { roomService } from "../../../services/roomService";
@@ -29,17 +29,17 @@ const RoomDetail = () => {
   const [isReport, setIsReport] = useState(false);
   const [isRentalRequest, setIsRentalRequest] = useState(false);
   const [reportForm, setReportForm] = useState({
-    reportType: 'scam',
-    message: '',
-    fullname: '',
-    phone: '',
-    email: ''
+    reportType: "scam",
+    message: "",
+    fullname: "",
+    phone: "",
+    email: "",
   });
 
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: "smooth" });
-    
-    if (action === 'rent') {
+
+    if (action === "rent") {
       setTimeout(() => {
         setIsRentalRequest(true);
       }, 500);
@@ -137,7 +137,7 @@ const RoomDetail = () => {
 
   const handleReportSubmit = async (e) => {
     e.preventDefault();
-    
+
     try {
       const reportData = {
         reportType: reportForm.reportType,
@@ -145,35 +145,40 @@ const RoomDetail = () => {
         fullname: reportForm.fullname,
         phone: reportForm.phone,
         email: reportForm.email,
-        postId: room._id
+        postId: room._id,
       };
 
-      const response = await fetch('https://vie-stay-server.vercel.app/api/reports', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(reportData)
-      });
+      const response = await fetch(
+        "https://vie-stay-server.onrender.com/api/reports",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(reportData),
+        }
+      );
 
       const result = await response.json();
 
       if (response.ok) {
-        toast.success('Phản ánh đã được gửi thành công! Chúng tôi sẽ xem xét và phản hồi sớm nhất.');
+        toast.success(
+          "Phản ánh đã được gửi thành công! Chúng tôi sẽ xem xét và phản hồi sớm nhất."
+        );
         setIsReport(false);
         setReportForm({
-          reportType: 'scam',
-          message: '',
-          fullname: '',
-          phone: '',
-          email: ''
+          reportType: "scam",
+          message: "",
+          fullname: "",
+          phone: "",
+          email: "",
         });
       } else {
-        toast.error(`Lỗi: ${result.message || 'Không thể gửi phản ánh'}`);
+        toast.error(`Lỗi: ${result.message || "Không thể gửi phản ánh"}`);
       }
     } catch (error) {
-      console.error('Error submitting report:', error);
-      toast.error('Có lỗi xảy ra khi gửi phản ánh. Vui lòng thử lại.');
+      console.error("Error submitting report:", error);
+      toast.error("Có lỗi xảy ra khi gửi phản ánh. Vui lòng thử lại.");
     }
   };
 
@@ -206,8 +211,12 @@ const RoomDetail = () => {
     return (
       <div className="max-w-6xl mx-auto p-6 text-center">
         <div className="text-gray-400 text-6xl mb-4">🏠</div>
-        <h2 className="text-2xl font-bold text-gray-800 mb-2">Không tìm thấy phòng</h2>
-        <p className="text-gray-600 mb-4">Phòng bạn tìm kiếm không tồn tại hoặc đã bị xóa</p>
+        <h2 className="text-2xl font-bold text-gray-800 mb-2">
+          Không tìm thấy phòng
+        </h2>
+        <p className="text-gray-600 mb-4">
+          Phòng bạn tìm kiếm không tồn tại hoặc đã bị xóa
+        </p>
         <button
           onClick={() => navigate("/search")}
           className="bg-orange-500 hover:bg-orange-600 text-white px-6 py-2 rounded-lg transition-colors"
@@ -218,26 +227,29 @@ const RoomDetail = () => {
     );
   }
 
-  const roomImages = room?.images && room.images.length > 0 
-    ? room.images 
-    : ["https://t3.ftcdn.net/jpg/02/15/15/46/360_F_215154625_hJg9QkfWH9Cu6LCTUc8TiuV6jQSI0C5X.jpg"];
+  const roomImages =
+    room?.images && room.images.length > 0
+      ? room.images
+      : [
+          "https://t3.ftcdn.net/jpg/02/15/15/46/360_F_215154625_hJg9QkfWH9Cu6LCTUc8TiuV6jQSI0C5X.jpg",
+        ];
 
   return (
-    <div className='w-full flex gap-4 relative'>
+    <div className="w-full flex gap-4 relative">
       {/* Toast Container */}
-      <Toaster 
+      <Toaster
         position="top-right"
         toastOptions={{
           duration: 4000,
           style: {
-            background: '#363636',
-            color: '#fff',
+            background: "#363636",
+            color: "#fff",
           },
           success: {
             duration: 3000,
             theme: {
-              primary: 'green',
-              secondary: 'black',
+              primary: "green",
+              secondary: "black",
             },
           },
         }}
@@ -259,7 +271,7 @@ const RoomDetail = () => {
       />
 
       {/* Left Column - 70% width */}
-      <div className='w-[70%]'>
+      <div className="w-[70%]">
         <RoomImageSlider
           images={roomImages}
           currentSlide={currentSlide}
@@ -267,68 +279,76 @@ const RoomDetail = () => {
         />
 
         {/* Main Content Card */}
-        <div className='bg-white rounded-md shadow-md p-4'>
+        <div className="bg-white rounded-md shadow-md p-4">
           <RoomInfo
             room={room}
             formatRoomType={formatRoomType}
             formatAddress={formatAddress}
           />
-          
+
           {/* Description Section */}
-          <div className='mt-8'>
-            <h3 className='font-semibold text-xl my-4'>Thông tin mô tả</h3>
-            <div className='flex flex-col gap-3'>
+          <div className="mt-8">
+            <h3 className="font-semibold text-xl my-4">Thông tin mô tả</h3>
+            <div className="flex flex-col gap-3">
               <span>{room?.description || "Mô tả đang được cập nhật..."}</span>
             </div>
           </div>
-          
+
           {/* Room Features Table */}
-          <div className='mt-8'>
-            <h3 className='font-semibold text-xl my-4'>Đặc điểm tin đăng</h3>
-            <table className='w-full'>
-              <tbody className='w-full'>
-                <tr className='w-full'>
-                  <td className='p-2'>Mã tin</td>
-                  <td className='p-2'>#{room?._id?.slice(-6) || "000000"}</td>
+          <div className="mt-8">
+            <h3 className="font-semibold text-xl my-4">Đặc điểm tin đăng</h3>
+            <table className="w-full">
+              <tbody className="w-full">
+                <tr className="w-full">
+                  <td className="p-2">Mã tin</td>
+                  <td className="p-2">#{room?._id?.slice(-6) || "000000"}</td>
                 </tr>
-                <tr className='w-full bg-gray-200'>
-                  <td className='p-2'>Khu vực</td>
-                  <td className='p-2'>{formatAddress()}</td>
+                <tr className="w-full bg-gray-200">
+                  <td className="p-2">Khu vực</td>
+                  <td className="p-2">{formatAddress()}</td>
                 </tr>
-                <tr className='w-full'>
-                  <td className='p-2'>Loại tin rao</td>
-                  <td className='p-2'>Cho thuê phòng trọ</td>
+                <tr className="w-full">
+                  <td className="p-2">Loại tin rao</td>
+                  <td className="p-2">Cho thuê phòng trọ</td>
                 </tr>
-                <tr className='w-full bg-gray-200'>
-                  <td className='p-2'>Đối tượng</td>
-                  <td className='p-2'>{room?.capacity || 1} người</td>
+                <tr className="w-full bg-gray-200">
+                  <td className="p-2">Đối tượng</td>
+                  <td className="p-2">{room?.capacity || 1} người</td>
                 </tr>
-                <tr className='w-full'>
-                  <td className='p-2'>Diện tích</td>
-                  <td className='p-2'>{room?.size || 0} m²</td>
+                <tr className="w-full">
+                  <td className="p-2">Diện tích</td>
+                  <td className="p-2">{room?.size || 0} m²</td>
                 </tr>
-                <tr className='w-full bg-gray-200'>
-                  <td className='p-2'>Ngày đăng</td>
-                  <td className='p-2'>{new Date(room?.createdAt || Date.now()).toLocaleDateString('vi-VN')}</td>
+                <tr className="w-full bg-gray-200">
+                  <td className="p-2">Ngày đăng</td>
+                  <td className="p-2">
+                    {new Date(room?.createdAt || Date.now()).toLocaleDateString(
+                      "vi-VN"
+                    )}
+                  </td>
                 </tr>
-                <tr className='w-full'>
-                  <td className='p-2'>Trạng thái</td>
-                  <td className='p-2'>
-                    <span className={`px-2 py-1 rounded text-sm ${
-                      room?.isAvailable ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
-                    }`}>
-                      {room?.isAvailable ? 'Còn trống' : 'Đã thuê'}
+                <tr className="w-full">
+                  <td className="p-2">Trạng thái</td>
+                  <td className="p-2">
+                    <span
+                      className={`px-2 py-1 rounded text-sm ${
+                        room?.isAvailable
+                          ? "bg-green-100 text-green-800"
+                          : "bg-red-100 text-red-800"
+                      }`}
+                    >
+                      {room?.isAvailable ? "Còn trống" : "Đã thuê"}
                     </span>
                   </td>
                 </tr>
               </tbody>
             </table>
           </div>
-          
+
           {/* Amenities */}
           {room?.amenities && room.amenities.length > 0 && (
-            <div className='mt-8'>
-              <h3 className='font-semibold text-xl my-4'>Tiện nghi</h3>
+            <div className="mt-8">
+              <h3 className="font-semibold text-xl my-4">Tiện nghi</h3>
               <div className="grid grid-cols-2 gap-2">
                 {room.amenities.map((amenity, idx) => (
                   <div key={idx} className="flex items-center text-sm">
@@ -342,25 +362,35 @@ const RoomDetail = () => {
 
           {/* Utility Rates */}
           {room?.utilityRates && Object.keys(room.utilityRates).length > 0 && (
-            <div className='mt-8'>
-              <h3 className='font-semibold text-xl my-4'>Chi phí dịch vụ</h3>
-              <table className='w-full'>
-                <tbody className='w-full'>
-                  {Object.entries(room.utilityRates).map(([key, value], index) =>
-                    value && value.rate ? (
-                      <tr key={key} className={`w-full ${index % 2 === 1 ? 'bg-gray-200' : ''}`}>
-                        <td className='p-2 capitalize'>
-                          {key === "water" ? "Tiền nước" : 
-                           key === "electricity" ? "Tiền điện" : 
-                           key === "internet" ? "Internet" : key}
-                        </td>
-                        <td className='p-2'>
-                          {value.type === "fixed"
-                            ? `${formatCurrencyVND(value.rate)} / tháng`
-                            : `${formatCurrencyVND(value.rate)} / đơn vị`}
-                        </td>
-                      </tr>
-                    ) : null
+            <div className="mt-8">
+              <h3 className="font-semibold text-xl my-4">Chi phí dịch vụ</h3>
+              <table className="w-full">
+                <tbody className="w-full">
+                  {Object.entries(room.utilityRates).map(
+                    ([key, value], index) =>
+                      value && value.rate ? (
+                        <tr
+                          key={key}
+                          className={`w-full ${
+                            index % 2 === 1 ? "bg-gray-200" : ""
+                          }`}
+                        >
+                          <td className="p-2 capitalize">
+                            {key === "water"
+                              ? "Tiền nước"
+                              : key === "electricity"
+                              ? "Tiền điện"
+                              : key === "internet"
+                              ? "Internet"
+                              : key}
+                          </td>
+                          <td className="p-2">
+                            {value.type === "fixed"
+                              ? `${formatCurrencyVND(value.rate)} / tháng`
+                              : `${formatCurrencyVND(value.rate)} / đơn vị`}
+                          </td>
+                        </tr>
+                      ) : null
                   )}
                 </tbody>
               </table>
@@ -370,7 +400,7 @@ const RoomDetail = () => {
       </div>
 
       {/* Right Column - 30% width */}
-      <div className='w-[30%] flex flex-col gap-8'>
+      <div className="w-[30%] flex flex-col gap-8">
         <UserInfoBox
           room={room}
           isFavorited={isFavorited}
@@ -390,8 +420,15 @@ const RoomDetail = () => {
         >
           <div className="keen-slider w-full max-w-6xl h-[90vh]">
             {roomImages.map((img, i) => (
-              <div key={i} className="keen-slider__slide flex justify-center items-center">
-                <img src={img} alt={`Ảnh ${i}`} className="max-h-full max-w-full object-contain" />
+              <div
+                key={i}
+                className="keen-slider__slide flex justify-center items-center"
+              >
+                <img
+                  src={img}
+                  alt={`Ảnh ${i}`}
+                  className="max-h-full max-w-full object-contain"
+                />
               </div>
             ))}
           </div>

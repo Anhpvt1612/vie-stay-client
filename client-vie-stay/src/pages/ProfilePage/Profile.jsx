@@ -31,7 +31,7 @@ const initialProfile = {
 };
 
 // DOMAIN_BACKEND dùng cho ảnh
-const DOMAIN_BACKEND = "https://vie-stay-server.vercel.app";
+const DOMAIN_BACKEND = "https://vie-stay-server.onrender.com";
 
 function formatDate(dateStr) {
   if (!dateStr) return "";
@@ -65,16 +65,23 @@ export default function Profile() {
         if (!id) throw new Error("Không tìm thấy userId");
         const res = await axiosInstance.get(`/user/${id}`);
         const data = res.data.data.user;
-        setProfile(prev => ({
+        setProfile((prev) => ({
           ...prev,
           ...data,
           dateOfBirth: formatDate(data.dateOfBirth),
           address: { ...prev.address, ...(data.address || {}) },
-          emergencyContact: { ...prev.emergencyContact, ...(data.emergencyContact || {}) }
+          emergencyContact: {
+            ...prev.emergencyContact,
+            ...(data.emergencyContact || {}),
+          },
         }));
-        console.log('Profile sau khi fetch:', { ...data });
+        console.log("Profile sau khi fetch:", { ...data });
       } catch (err) {
-        setApiError(err?.response?.data?.message || err.message || "Lỗi khi lấy thông tin user");
+        setApiError(
+          err?.response?.data?.message ||
+            err.message ||
+            "Lỗi khi lấy thông tin user"
+        );
       } finally {
         setLoading(false);
       }
@@ -86,12 +93,12 @@ export default function Profile() {
   // Hàm cập nhật từng trường
   const handleChange = (field, value) => {
     // Đảm bảo chỉ cập nhật đúng trường, không ảnh hưởng emergencyContact
-    setProfile(prev => ({ ...prev, [field]: value }));
+    setProfile((prev) => ({ ...prev, [field]: value }));
   };
 
   // Hàm cập nhật cho address
   const handleAddressChange = (field, value) => {
-    setProfile(prev => ({
+    setProfile((prev) => ({
       ...prev,
       address: { ...prev.address, [field]: value },
     }));
@@ -100,7 +107,7 @@ export default function Profile() {
   // Hàm cập nhật cho emergencyContact
   const handleEmergencyChange = (field, value) => {
     // Đảm bảo chỉ cập nhật emergencyContact, không ảnh hưởng profile.phoneNumber
-    setProfile(prev => ({
+    setProfile((prev) => ({
       ...prev,
       emergencyContact: { ...prev.emergencyContact, [field]: value },
     }));
@@ -109,32 +116,48 @@ export default function Profile() {
   // Validation nâng cao
   const validate = () => {
     const newErrors = {};
-    if (!profile.name || profile.name.trim().length < 2) newErrors.name = "Họ tên không hợp lệ";
+    if (!profile.name || profile.name.trim().length < 2)
+      newErrors.name = "Họ tên không hợp lệ";
     // Validate số điện thoại chính chủ
-    if (!/^(0|\+84)[0-9]{9,10}$/.test(profile.phoneNumber)) newErrors.phoneNumber = "Số điện thoại không hợp lệ";
-    if (profile.dateOfBirth && new Date(profile.dateOfBirth) > new Date()) newErrors.dateOfBirth = "Ngày sinh không hợp lệ";
-    if (profile.nationalId && profile.nationalId.length > 20) newErrors.nationalId = "Số CMND/CCCD tối đa 20 ký tự";
-    if (!profile.address.fullAddress) newErrors.fullAddress = "Địa chỉ đầy đủ không được để trống";
-    if (!profile.emergencyContact.name) newErrors.emergencyName = "Tên liên hệ không được để trống";
+    if (!/^(0|\+84)[0-9]{9,10}$/.test(profile.phoneNumber))
+      newErrors.phoneNumber = "Số điện thoại không hợp lệ";
+    if (profile.dateOfBirth && new Date(profile.dateOfBirth) > new Date())
+      newErrors.dateOfBirth = "Ngày sinh không hợp lệ";
+    if (profile.nationalId && profile.nationalId.length > 20)
+      newErrors.nationalId = "Số CMND/CCCD tối đa 20 ký tự";
+    if (!profile.address.fullAddress)
+      newErrors.fullAddress = "Địa chỉ đầy đủ không được để trống";
+    if (!profile.emergencyContact.name)
+      newErrors.emergencyName = "Tên liên hệ không được để trống";
     // Validate số điện thoại người liên hệ khẩn cấp
-    if (!profile.emergencyContact.phoneNumber || !/^(0|\+84)[0-9]{9,10}$/.test(profile.emergencyContact.phoneNumber)) {
+    if (
+      !profile.emergencyContact.phoneNumber ||
+      !/^(0|\+84)[0-9]{9,10}$/.test(profile.emergencyContact.phoneNumber)
+    ) {
       newErrors.emergencyPhoneNumber = "Số điện thoại liên hệ không hợp lệ";
     }
     // Validate file (nếu là file mới)
     if (profile.profileImage && typeof profile.profileImage === "object") {
-      if (!profile.profileImage.type.startsWith("image/")) newErrors.profileImage = "Chỉ chấp nhận file ảnh";
-      if (profile.profileImage.size > 5 * 1024 * 1024) newErrors.profileImage = "Ảnh đại diện tối đa 5MB";
+      if (!profile.profileImage.type.startsWith("image/"))
+        newErrors.profileImage = "Chỉ chấp nhận file ảnh";
+      if (profile.profileImage.size > 5 * 1024 * 1024)
+        newErrors.profileImage = "Ảnh đại diện tối đa 5MB";
     }
-    if (profile.nationalIdImage && typeof profile.nationalIdImage === "object") {
-      if (!profile.nationalIdImage.type.startsWith("image/")) newErrors.nationalIdImage = "Chỉ chấp nhận file ảnh";
-      if (profile.nationalIdImage.size > 5 * 1024 * 1024) newErrors.nationalIdImage = "Ảnh CMND/CCCD tối đa 5MB";
+    if (
+      profile.nationalIdImage &&
+      typeof profile.nationalIdImage === "object"
+    ) {
+      if (!profile.nationalIdImage.type.startsWith("image/"))
+        newErrors.nationalIdImage = "Chỉ chấp nhận file ảnh";
+      if (profile.nationalIdImage.size > 5 * 1024 * 1024)
+        newErrors.nationalIdImage = "Ảnh CMND/CCCD tối đa 5MB";
     }
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
 
   // Submit cập nhật profile (KHÔNG update vào store)
-  const handleSubmit = async e => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     setSuccessMsg("");
     setApiError("");
@@ -152,7 +175,10 @@ export default function Profile() {
         });
       }
       // 2. Nếu có file CMND/CCCD mới, upload
-      if (profile.nationalIdImage && typeof profile.nationalIdImage === "object") {
+      if (
+        profile.nationalIdImage &&
+        typeof profile.nationalIdImage === "object"
+      ) {
         const formData = new FormData();
         formData.append("nationalIdImage", profile.nationalIdImage);
         await axiosInstance.patch(`/user/${id}`, formData, {
@@ -161,20 +187,25 @@ export default function Profile() {
       }
       // 3. Cập nhật các trường khác (gửi object lồng nhau, không phẳng hóa)
       const updateData = { ...profile };
-      if (typeof updateData.profileImage === "object") delete updateData.profileImage;
-      if (typeof updateData.nationalIdImage === "object") delete updateData.nationalIdImage;
+      if (typeof updateData.profileImage === "object")
+        delete updateData.profileImage;
+      if (typeof updateData.nationalIdImage === "object")
+        delete updateData.nationalIdImage;
       await axiosInstance.patch(`/user/${id}`, updateData, {
         headers: { "Content-Type": "application/json" },
       });
       // 4. Lấy lại user mới nhất (KHÔNG update vào store)
       const res = await axiosInstance.get(`/user/${id}`);
       const data = res.data.data.user;
-      setProfile(prev => ({
+      setProfile((prev) => ({
         ...prev,
         ...data,
         dateOfBirth: formatDate(data.dateOfBirth),
         address: { ...prev.address, ...(data.address || {}) },
-        emergencyContact: { ...prev.emergencyContact, ...(data.emergencyContact || {}) }
+        emergencyContact: {
+          ...prev.emergencyContact,
+          ...(data.emergencyContact || {}),
+        },
       }));
       setSuccessMsg("Cập nhật thành công!");
       setErrors({});
@@ -183,7 +214,11 @@ export default function Profile() {
         setErrors(err.response.data.errors);
         setApiError("Có lỗi ở một số trường, vui lòng kiểm tra lại!");
       } else {
-        setApiError(err.response?.data?.message || err.message || "Lỗi khi cập nhật profile");
+        setApiError(
+          err.response?.data?.message ||
+            err.message ||
+            "Lỗi khi cập nhật profile"
+        );
       }
     } finally {
       setLoading(false);
@@ -200,37 +235,51 @@ export default function Profile() {
       formData.append("nationalIdFront", frontImage);
       formData.append("nationalIdBack", backImage);
 
-      const response = await axiosInstance.post(`/user/${id}/verify-national-id`, formData, {
-        headers: { "Content-Type": "multipart/form-data" },
-        timeout: 60000,
-      });
+      const response = await axiosInstance.post(
+        `/user/${id}/verify-national-id`,
+        formData,
+        {
+          headers: { "Content-Type": "multipart/form-data" },
+          timeout: 60000,
+        }
+      );
 
       console.log("🔍 Backend response:", response.data);
 
-      if (response.data.success) { // ✅ Kiểm tra success field
+      if (response.data.success) {
+        // ✅ Kiểm tra success field
         const extractedData = response.data.extractedData; // ✅ Lấy data đúng level
-        
+
         console.log("📋 Extracted data for update:", extractedData);
-        
+
         // ✅ Cập nhật với đúng field names
-        setProfile(prev => ({
+        setProfile((prev) => ({
           ...prev,
           nationalId: extractedData.nationalId || prev.nationalId,
           name: extractedData.fullName || extractedData.name || prev.name, // Try both
-          dateOfBirth: extractedData.dateOfBirth ? 
-            (extractedData.dateOfBirth.includes('T') ? 
-              extractedData.dateOfBirth.split('T')[0] : 
-              extractedData.dateOfBirth) : prev.dateOfBirth,
+          dateOfBirth: extractedData.dateOfBirth
+            ? extractedData.dateOfBirth.includes("T")
+              ? extractedData.dateOfBirth.split("T")[0]
+              : extractedData.dateOfBirth
+            : prev.dateOfBirth,
           nationalIdVerified: true,
           address: {
             ...prev.address,
             fullAddress: extractedData.address || prev.address.fullAddress,
             // ✅ Cải thiện logic parse địa chỉ
-            city: extractedData.address?.toUpperCase().includes('ĐÀ NẴNG') ? 'Đà Nẵng' : prev.address.city,
-            district: extractedData.address?.toUpperCase().includes('HÒA VANG') ? 'Hòa Vang' : prev.address.district,
-            ward: extractedData.address?.toUpperCase().includes('HÒA NINH') ? 'Hòa Ninh' : prev.address.ward,
-            street: extractedData.address?.toUpperCase().includes('THÔN 5') ? 'Thôn 5' : prev.address.street
-          }
+            city: extractedData.address?.toUpperCase().includes("ĐÀ NẴNG")
+              ? "Đà Nẵng"
+              : prev.address.city,
+            district: extractedData.address?.toUpperCase().includes("HÒA VANG")
+              ? "Hòa Vang"
+              : prev.address.district,
+            ward: extractedData.address?.toUpperCase().includes("HÒA NINH")
+              ? "Hòa Ninh"
+              : prev.address.ward,
+            street: extractedData.address?.toUpperCase().includes("THÔN 5")
+              ? "Thôn 5"
+              : prev.address.street,
+          },
         }));
 
         // ✅ Expose function cho ProfileNationalId component
@@ -241,31 +290,33 @@ export default function Profile() {
           • Họ tên: ${extractedData.fullName || extractedData.name}
           • Ngày sinh: ${extractedData.dateOfBirth}
           • Địa chỉ: ${extractedData.address}`);
-        
+
         return {
           success: true,
           data: { extractedData },
-          message: "Xác thực thành công!"
+          message: "Xác thực thành công!",
         };
       }
     } catch (error) {
       const errorMsg = error.response?.data?.message || error.message;
-      
+
       console.error("❌ Verification error:", error);
-      
-      if (error.code === 'ECONNABORTED' && error.message.includes('timeout')) {
-        setApiError("⏱️ Quá trình xác thực mất nhiều thời gian. Vui lòng kiểm tra lại thông tin.");
+
+      if (error.code === "ECONNABORTED" && error.message.includes("timeout")) {
+        setApiError(
+          "⏱️ Quá trình xác thực mất nhiều thời gian. Vui lòng kiểm tra lại thông tin."
+        );
         setTimeout(() => window.location.reload(), 3000);
         return {
           success: false,
-          message: "Timeout - đang kiểm tra kết quả..."
+          message: "Timeout - đang kiểm tra kết quả...",
         };
       }
-      
+
       setApiError("❌ Lỗi xác thực CCCD: " + errorMsg);
       return {
         success: false,
-        message: errorMsg
+        message: errorMsg,
       };
     }
   };
@@ -276,18 +327,36 @@ export default function Profile() {
         onSubmit={handleSubmit}
         className="max-w-3xl mx-auto bg-white p-8 rounded-2xl shadow-2xl flex flex-col gap-10 mt-10 mb-10 border border-blue-100"
       >
-        {loading && <div className="text-blue-600 font-semibold mb-2">Đang xử lý...</div>}
-        {successMsg && <div className="text-green-600 font-semibold mb-2">{successMsg}</div>}
-        {apiError && <div className="text-red-600 font-semibold mb-2">{apiError}</div>}
+        {loading && (
+          <div className="text-blue-600 font-semibold mb-2">Đang xử lý...</div>
+        )}
+        {successMsg && (
+          <div className="text-green-600 font-semibold mb-2">{successMsg}</div>
+        )}
+        {apiError && (
+          <div className="text-red-600 font-semibold mb-2">{apiError}</div>
+        )}
         <div className="flex flex-col md:flex-row gap-10 items-stretch">
           <div className="flex flex-col items-center justify-center w-full md:w-1/3 min-w-[180px] max-w-[220px]">
-            <ProfileAvatar value={profile.profileImage} onChange={file => handleChange("profileImage", file)} error={errors.profileImage} />
+            <ProfileAvatar
+              value={profile.profileImage}
+              onChange={(file) => handleChange("profileImage", file)}
+              error={errors.profileImage}
+            />
           </div>
           <div className="w-full md:w-2/3 flex-1">
-            <ProfileBasicInfo value={profile} onChange={handleChange} errors={errors} />
+            <ProfileBasicInfo
+              value={profile}
+              onChange={handleChange}
+              errors={errors}
+            />
           </div>
         </div>
-        <ProfileAddress value={profile.address} onChange={handleAddressChange} errors={errors} />
+        <ProfileAddress
+          value={profile.address}
+          onChange={handleAddressChange}
+          errors={errors}
+        />
         <ProfileNationalId
           value={profile}
           onChange={handleChange}
@@ -318,8 +387,19 @@ export default function Profile() {
           className="flex items-center gap-2 mt-4 mb-2 px-6 py-3 bg-gradient-to-r from-pink-500 via-purple-500 to-indigo-500 text-white font-bold rounded-full shadow-lg hover:from-pink-600 hover:to-indigo-600 transition-all text-lg self-start focus:outline-none focus:ring-4 focus:ring-pink-200 animate-pulse"
           onClick={() => setShowChangePassword(true)}
         >
-          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-6 h-6">
-            <path strokeLinecap="round" strokeLinejoin="round" d="M16.5 10.5V7.5A4.5 4.5 0 008 7.5v3m8.25 0A2.25 2.25 0 0120.5 12.75v4.5A2.25 2.25 0 0118.25 19.5h-12A2.25 2.25 0 014 17.25v-4.5A2.25 2.25 0 016.25 10.5m11.25 0h-11.25" />
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 24 24"
+            strokeWidth={2}
+            stroke="currentColor"
+            className="w-6 h-6"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              d="M16.5 10.5V7.5A4.5 4.5 0 008 7.5v3m8.25 0A2.25 2.25 0 0120.5 12.75v4.5A2.25 2.25 0 0118.25 19.5h-12A2.25 2.25 0 014 17.25v-4.5A2.25 2.25 0 016.25 10.5m11.25 0h-11.25"
+            />
           </svg>
           Đổi mật khẩu
         </button>

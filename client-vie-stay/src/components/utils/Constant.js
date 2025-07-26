@@ -1,1 +1,1 @@
-export const BASE_URL = "https://vie-stay-server.vercel.app";
+export const BASE_URL = "https://vie-stay-server.onrender.com";

@@ -14,8 +14,8 @@ import {
   User,
   UserCheck,
   WalletIcon,
-  MessageSquare
-} from 'lucide-react';
+  MessageSquare,
+} from "lucide-react";
 
 const OwnerLayout = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -45,55 +45,55 @@ const OwnerLayout = () => {
   }, [showWelcome, user?.name]);
 
   const navigation = [
-  {
-    name: "Dashboard",
-    href: "/owner/dashboard",
-    icon: LayoutDashboard,
-    current: false,
-  },
-  {
-    name: "Quản lý tin đăng",
-    href: "/owner/posts",
-    icon: MessageSquare,
-    current: false,
-  },
-  {
-    name: "Tòa nhà",
-    href: "/owner/accommodations",
-    icon: Building,
-    current: false,
-  },
-  {
-    name: "Yêu cầu thuê",
-    href: "/owner/rental-requests",
-    icon: UserCheck,
-    current: false,
-  },
-  {
-    name: "Yêu cầu bạn chung phòng",
-    href: "/owner/co-tenants",
-    icon: Users,
-    current: false,
-  },
-  {
-    name: "Báo cáo",
-    href: "/owner/reports",
-    icon: FileText,
-    current: false,
-  },
-  {
-    name: "Rút tiền",
-    href: "/owner/withdrawals",
-    icon: WalletIcon,
-    current: location.pathname === "/owner/withdrawals",
-  },
-  {
-    name: "Cài đặt",
-    href: "/owner/settings",
-    icon: Settings,
-    current: false,
-  },
-];
+    {
+      name: "Dashboard",
+      href: "/owner/dashboard",
+      icon: LayoutDashboard,
+      current: false,
+    },
+    {
+      name: "Quản lý tin đăng",
+      href: "/owner/posts",
+      icon: MessageSquare,
+      current: false,
+    },
+    {
+      name: "Tòa nhà",
+      href: "/owner/accommodations",
+      icon: Building,
+      current: false,
+    },
+    {
+      name: "Yêu cầu thuê",
+      href: "/owner/rental-requests",
+      icon: UserCheck,
+      current: false,
+    },
+    {
+      name: "Yêu cầu bạn chung phòng",
+      href: "/owner/co-tenants",
+      icon: Users,
+      current: false,
+    },
+    {
+      name: "Báo cáo",
+      href: "/owner/reports",
+      icon: FileText,
+      current: false,
+    },
+    {
+      name: "Rút tiền",
+      href: "/owner/withdrawals",
+      icon: WalletIcon,
+      current: location.pathname === "/owner/withdrawals",
+    },
+    {
+      name: "Cài đặt",
+      href: "/owner/settings",
+      icon: Settings,
+      current: false,
+    },
+  ];
 
   // ✅ THÊM: Loading state
   if (isCheckingAuth) {
@@ -107,35 +107,41 @@ const OwnerLayout = () => {
     );
   }
 
-// ✅ SỬA: Role protection cho array role
-if (!isAuthenticated || !user?.role?.includes('landlord')) {
-  return <Navigate to="/login" replace />;
-}
+  // ✅ SỬA: Role protection cho array role
+  if (!isAuthenticated || !user?.role?.includes("landlord")) {
+    return <Navigate to="/login" replace />;
+  }
 
-// ✅ ENHANCED: Better current path detection for nested routes
-const updatedNavigation = navigation.map((item) => ({
-  ...item,
-  current:
-    location.pathname === item.href ||
-    location.pathname.startsWith(item.href + "/") ||
-    // Special handling for posts route
-    (item.href === "/owner/posts" &&
-      location.pathname.startsWith("/owner/posts")),
-}));
+  // ✅ ENHANCED: Better current path detection for nested routes
+  const updatedNavigation = navigation.map((item) => ({
+    ...item,
+    current:
+      location.pathname === item.href ||
+      location.pathname.startsWith(item.href + "/") ||
+      // Special handling for posts route
+      (item.href === "/owner/posts" &&
+        location.pathname.startsWith("/owner/posts")),
+  }));
 
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Mobile sidebar */}
       <div
-        className={`fixed inset-0 flex z-40 md:hidden ${sidebarOpen ? "" : "pointer-events-none"}`}
+        className={`fixed inset-0 flex z-40 md:hidden ${
+          sidebarOpen ? "" : "pointer-events-none"
+        }`}
       >
         <div
-          className={`fixed inset-0 bg-gray-600 bg-opacity-75 transition-opacity ease-linear duration-300 ${sidebarOpen ? "opacity-100" : "opacity-0 pointer-events-none"}`}
+          className={`fixed inset-0 bg-gray-600 bg-opacity-75 transition-opacity ease-linear duration-300 ${
+            sidebarOpen ? "opacity-100" : "opacity-0 pointer-events-none"
+          }`}
           onClick={() => setSidebarOpen(false)}
         />
 
         <div
-          className={`relative flex-1 flex flex-col max-w-xs w-full pt-5 pb-4 bg-white transform transition ease-in-out duration-300 ${sidebarOpen ? "translate-x-0" : "-translate-x-full"}`}
+          className={`relative flex-1 flex flex-col max-w-xs w-full pt-5 pb-4 bg-white transform transition ease-in-out duration-300 ${
+            sidebarOpen ? "translate-x-0" : "-translate-x-full"
+          }`}
         >
           <div className="absolute top-0 right-0 -mr-12 pt-2">
             <button
@@ -167,7 +173,11 @@ const updatedNavigation = navigation.map((item) => ({
                   }`}
                 >
                   <item.icon
-                    className={`mr-4 flex-shrink-0 h-6 w-6 ${item.current ? "text-blue-500" : "text-gray-400 group-hover:text-gray-500"}`}
+                    className={`mr-4 flex-shrink-0 h-6 w-6 ${
+                      item.current
+                        ? "text-blue-500"
+                        : "text-gray-400 group-hover:text-gray-500"
+                    }`}
                   />
                   {item.name}
                 </button>
@@ -181,7 +191,7 @@ const updatedNavigation = navigation.map((item) => ({
               <div className="flex-shrink-0">
                 {user?.profileImage ? (
                   <img
-                    src={`https://vie-stay-server.vercel.app${user.profileImage}`}
+                    src={`https://vie-stay-server.onrender.com${user.profileImage}`}
                     alt="Profile"
                     className="h-8 w-8 rounded-full object-cover"
                   />
@@ -224,7 +234,11 @@ const updatedNavigation = navigation.map((item) => ({
                   }`}
                 >
                   <item.icon
-                    className={`mr-3 flex-shrink-0 h-5 w-5 ${item.current ? "text-blue-500" : "text-gray-400 group-hover:text-gray-500"}`}
+                    className={`mr-3 flex-shrink-0 h-5 w-5 ${
+                      item.current
+                        ? "text-blue-500"
+                        : "text-gray-400 group-hover:text-gray-500"
+                    }`}
                   />
                   {item.name}
                   {/* ✅ ADDED: Badge for post management to show it's important */}
@@ -273,7 +287,7 @@ const updatedNavigation = navigation.map((item) => ({
               <div className="flex-shrink-0">
                 {user?.profileImage ? (
                   <img
-                    src={`https://vie-stay-server.vercel.app${user.profileImage}`}
+                    src={`https://vie-stay-server.onrender.com${user.profileImage}`}
                     alt="Profile"
                     className="h-8 w-8 rounded-full object-cover"
                   />
@@ -368,7 +382,7 @@ const updatedNavigation = navigation.map((item) => ({
               <div className="ml-3 flex items-center md:hidden">
                 {user?.profileImage ? (
                   <img
-                    src={`https://vie-stay-server.vercel.app${user.profileImage}`}
+                    src={`https://vie-stay-server.onrender.com${user.profileImage}`}
                     alt="Profile"
                     className="h-8 w-8 rounded-full object-cover"
                   />

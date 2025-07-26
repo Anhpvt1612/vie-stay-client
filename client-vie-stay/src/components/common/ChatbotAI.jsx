@@ -2,22 +2,31 @@ import React, { useState, useRef } from "react";
 import { Send, Smile, User, Loader, X } from "lucide-react";
 
 const DISTRICTS = [
-  "Hải Châu", "Thanh Khê", "Sơn Trà", "Ngũ Hành Sơn", "Liên Chiểu", "Cẩm Lệ", "Hòa Vang"
+  "Hải Châu",
+  "Thanh Khê",
+  "Sơn Trà",
+  "Ngũ Hành Sơn",
+  "Liên Chiểu",
+  "Cẩm Lệ",
+  "Hòa Vang",
 ];
 
 const extractDistrict = (text) => {
-  return DISTRICTS.find(d => text.toLowerCase().includes(d.toLowerCase()));
+  return DISTRICTS.find((d) => text.toLowerCase().includes(d.toLowerCase()));
 };
 
 // Hàm lấy tên khu vực (quận)
 const getRoomDistrict = (room) => {
-  return room.accommodationId?.address?.district || room.district || "Đang cập nhật";
+  return (
+    room.accommodationId?.address?.district || room.district || "Đang cập nhật"
+  );
 };
 
 // Thêm hàm lấy địa chỉ phòng
 const getRoomAddress = (room) => {
   if (room.fullAddress) return room.fullAddress;
-  if (room.accommodationId?.address?.fullAddress) return room.accommodationId.address.fullAddress;
+  if (room.accommodationId?.address?.fullAddress)
+    return room.accommodationId.address.fullAddress;
   if (room.accommodationId?.address) {
     const { street, ward, district, city } = room.accommodationId.address;
     return [street, ward, district, city].filter(Boolean).join(", ");
@@ -28,31 +37,41 @@ const getRoomAddress = (room) => {
 const ChatbotAI = () => {
   const [open, setOpen] = useState(false);
   const [messages, setMessages] = useState([
-    { role: "assistant", content: "Xin chào! Tôi có thể giúp gì cho bạn về phòng trọ, giá cả, khu vực, dịch vụ tại Đà Nẵng?" },
+    {
+      role: "assistant",
+      content:
+        "Xin chào! Tôi có thể giúp gì cho bạn về phòng trọ, giá cả, khu vực, dịch vụ tại Đà Nẵng?",
+    },
   ]);
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
   const messagesEndRef = useRef(null);
 
-
-
-   const API_KEY_CHATBOT = import.meta.env.VITE_OPENAI_API_KEY;
-
-
+  const API_KEY_CHATBOT = import.meta.env.VITE_OPENAI_API_KEY;
 
   // Lấy phòng trọ mới nhất
   const fetchLatestRoomsInfo = async () => {
     try {
-      const res = await fetch("https://vie-stay-server.vercel.app/rooms");
+      const res = await fetch("https://vie-stay-server.onrender.com/rooms");
       const data = await res.json();
       if (data?.data?.rooms && Array.isArray(data.data.rooms)) {
-        const info = data.data.rooms.slice(0, 5).map((room, idx) => {
-          const gia = room.baseRent ? `${room.baseRent.toLocaleString()}đ/tháng` : "Giá liên hệ";
-          const diachi = getRoomAddress(room);
-          const khuVuc = getRoomDistrict(room);
-          const dichvu = room.amenities && room.amenities.length > 0 ? room.amenities.join(", ") : "Không có thông tin";
-          return `${idx + 1}. ${room.name || "Phòng trọ"} - Giá: ${gia} - Địa chỉ: ${diachi} - Khu vực: ${khuVuc} - Dịch vụ: ${dichvu}`;
-        }).join("\n");
+        const info = data.data.rooms
+          .slice(0, 5)
+          .map((room, idx) => {
+            const gia = room.baseRent
+              ? `${room.baseRent.toLocaleString()}đ/tháng`
+              : "Giá liên hệ";
+            const diachi = getRoomAddress(room);
+            const khuVuc = getRoomDistrict(room);
+            const dichvu =
+              room.amenities && room.amenities.length > 0
+                ? room.amenities.join(", ")
+                : "Không có thông tin";
+            return `${idx + 1}. ${
+              room.name || "Phòng trọ"
+            } - Giá: ${gia} - Địa chỉ: ${diachi} - Khu vực: ${khuVuc} - Dịch vụ: ${dichvu}`;
+          })
+          .join("\n");
         return info;
       }
       return null;
@@ -64,18 +83,32 @@ const ChatbotAI = () => {
   // Lấy phòng trọ theo khu vực
   const fetchRoomsByDistrict = async (district) => {
     try {
-      const res = await fetch(`https://vie-stay-server.vercel.app/rooms/search?district=${encodeURIComponent(district)}`);
+      const res = await fetch(
+        `https://vie-stay-server.onrender.com/rooms/search?district=${encodeURIComponent(
+          district
+        )}`
+      );
       const data = await res.json();
       console.log("DATA ROOMS BY DISTRICT:", data); // Thêm dòng này
 
       if (data?.data?.rooms && Array.isArray(data.data.rooms)) {
-        const info = data.data.rooms.slice(0, 5).map((room, idx) => {
-          const gia = room.baseRent ? `${room.baseRent.toLocaleString()}đ/tháng` : "Giá liên hệ";
-          const diachi = getRoomAddress(room);
-          const khuVuc = getRoomDistrict(room);
-          const dichvu = room.amenities && room.amenities.length > 0 ? room.amenities.join(", ") : "Không có thông tin";
-          return `${idx + 1}. ${room.name || "Phòng trọ"} - Giá: ${gia} - Địa chỉ: ${diachi} - Khu vực: ${khuVuc} - Dịch vụ: ${dichvu}`;
-        }).join("\n");
+        const info = data.data.rooms
+          .slice(0, 5)
+          .map((room, idx) => {
+            const gia = room.baseRent
+              ? `${room.baseRent.toLocaleString()}đ/tháng`
+              : "Giá liên hệ";
+            const diachi = getRoomAddress(room);
+            const khuVuc = getRoomDistrict(room);
+            const dichvu =
+              room.amenities && room.amenities.length > 0
+                ? room.amenities.join(", ")
+                : "Không có thông tin";
+            return `${idx + 1}. ${
+              room.name || "Phòng trọ"
+            } - Giá: ${gia} - Địa chỉ: ${diachi} - Khu vực: ${khuVuc} - Dịch vụ: ${dichvu}`;
+          })
+          .join("\n");
         return info;
       }
       return null;
@@ -103,7 +136,9 @@ const ChatbotAI = () => {
     if (roomsInfo) {
       systemMsg = {
         role: "system",
-        content: `Bạn là trợ lý cho website VietStay. Dưới đây là một số phòng trọ ${district ? `ở khu vực ${district}` : "mới nhất"} trên web (bao gồm giá, khu vực, dịch vụ):\n${roomsInfo}\nNếu khách hỏi về phòng trọ, giá cả, khu vực, dịch vụ, hãy ưu tiên trả lời dựa trên thông tin này. Nếu không đủ thông tin, hãy hướng dẫn khách sử dụng chức năng tìm kiếm trên website.`,
+        content: `Bạn là trợ lý cho website VietStay. Dưới đây là một số phòng trọ ${
+          district ? `ở khu vực ${district}` : "mới nhất"
+        } trên web (bao gồm giá, khu vực, dịch vụ):\n${roomsInfo}\nNếu khách hỏi về phòng trọ, giá cả, khu vực, dịch vụ, hãy ưu tiên trả lời dựa trên thông tin này. Nếu không đủ thông tin, hãy hướng dẫn khách sử dụng chức năng tìm kiếm trên website.`,
       };
     } else {
       systemMsg = {
@@ -115,8 +150,8 @@ const ChatbotAI = () => {
     // 3. Ghép messages
     const newMessages = [
       systemMsg,
-      ...messages.filter(m => m.role !== "system"),
-      { role: "user", content: input }
+      ...messages.filter((m) => m.role !== "system"),
+      { role: "user", content: input },
     ];
 
     // 4. Gửi lên OpenAI
@@ -133,10 +168,14 @@ const ChatbotAI = () => {
         }),
       });
       const data = await res.json();
-      const reply = data.choices?.[0]?.message?.content || "Xin lỗi, tôi không hiểu.";
+      const reply =
+        data.choices?.[0]?.message?.content || "Xin lỗi, tôi không hiểu.";
       setMessages((prev) => [...prev, { role: "assistant", content: reply }]);
     } catch (err) {
-      setMessages((prev) => [...prev, { role: "assistant", content: "Đã xảy ra lỗi!" }]);
+      setMessages((prev) => [
+        ...prev,
+        { role: "assistant", content: "Đã xảy ra lỗi!" },
+      ]);
     }
     setLoading(false);
     setInput("");
@@ -169,18 +208,38 @@ const ChatbotAI = () => {
         {/* Header */}
         <div className="flex items-center justify-between px-4 py-3 border-b bg-gradient-to-tr from-blue-600 to-blue-400 rounded-t-2xl shadow-sm">
           <div className="flex items-center gap-2">
-            <Smile size={24} className="text-white bg-blue-500 rounded-full p-1" />
-            <span className="text-white font-bold text-lg">VieStay Chatbot</span>
+            <Smile
+              size={24}
+              className="text-white bg-blue-500 rounded-full p-1"
+            />
+            <span className="text-white font-bold text-lg">
+              VieStay Chatbot
+            </span>
           </div>
-          <button onClick={() => setOpen(false)} className="text-white text-2xl hover:bg-blue-700 rounded-full w-8 h-8 flex items-center justify-center transition">
+          <button
+            onClick={() => setOpen(false)}
+            className="text-white text-2xl hover:bg-blue-700 rounded-full w-8 h-8 flex items-center justify-center transition"
+          >
             <X size={24} />
           </button>
         </div>
         {/* Messages */}
-        <div className="flex-1 overflow-y-auto px-4 py-3 space-y-3 bg-gradient-to-b from-blue-50 to-white" style={{ fontSize: 15 }}>
+        <div
+          className="flex-1 overflow-y-auto px-4 py-3 space-y-3 bg-gradient-to-b from-blue-50 to-white"
+          style={{ fontSize: 15 }}
+        >
           {messages.map((msg, idx) => (
-            <div key={idx} className={`flex ${msg.role === "user" ? "justify-end" : "justify-start"}`}>
-              <div className={`flex items-end gap-2 max-w-[80%] ${msg.role === "user" ? "flex-row-reverse" : ""}`}>
+            <div
+              key={idx}
+              className={`flex ${
+                msg.role === "user" ? "justify-end" : "justify-start"
+              }`}
+            >
+              <div
+                className={`flex items-end gap-2 max-w-[80%] ${
+                  msg.role === "user" ? "flex-row-reverse" : ""
+                }`}
+              >
                 {/* Avatar */}
                 <div className="flex-shrink-0">
                   {msg.role === "user" ? (
@@ -190,7 +249,13 @@ const ChatbotAI = () => {
                   )}
                 </div>
                 {/* Bubble */}
-                <div className={`px-4 py-2 rounded-2xl shadow-md ${msg.role === "user" ? "bg-blue-500 text-white" : "bg-white text-gray-900 border border-blue-100"} whitespace-pre-line break-words`}>
+                <div
+                  className={`px-4 py-2 rounded-2xl shadow-md ${
+                    msg.role === "user"
+                      ? "bg-blue-500 text-white"
+                      : "bg-white text-gray-900 border border-blue-100"
+                  } whitespace-pre-line break-words`}
+                >
                   {msg.content}
                 </div>
               </div>
@@ -212,11 +277,17 @@ const ChatbotAI = () => {
           />
           <button
             onClick={handleSend}
-            className={`bg-gradient-to-tr from-blue-600 to-blue-400 text-white px-4 py-2 rounded-full shadow hover:scale-105 transition flex items-center gap-1 disabled:opacity-60 ${loading ? "cursor-not-allowed" : ""}`}
+            className={`bg-gradient-to-tr from-blue-600 to-blue-400 text-white px-4 py-2 rounded-full shadow hover:scale-105 transition flex items-center gap-1 disabled:opacity-60 ${
+              loading ? "cursor-not-allowed" : ""
+            }`}
             disabled={loading || !input.trim()}
             aria-label="Gửi"
           >
-            {loading ? <Loader className="animate-spin w-5 h-5" /> : <Send className="w-5 h-5" />}
+            {loading ? (
+              <Loader className="animate-spin w-5 h-5" />
+            ) : (
+              <Send className="w-5 h-5" />
+            )}
           </button>
         </div>
       </div>
@@ -234,4 +305,4 @@ const ChatbotAI = () => {
   );
 };
 
-export default ChatbotAI; 
+export default ChatbotAI;

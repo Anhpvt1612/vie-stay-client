@@ -24,19 +24,20 @@ const Navbar = () => {
   useEffect(() => {
     const checkUserData = () => {
       // This will trigger on component mount and when dependencies change
-      const token = localStorage.getItem("token") || sessionStorage.getItem("token");
+      const token =
+        localStorage.getItem("token") || sessionStorage.getItem("token");
       const storedUser = JSON.parse(
-        localStorage.getItem("user") || 
-        sessionStorage.getItem("user") || 
-        "{}"
+        localStorage.getItem("user") || sessionStorage.getItem("user") || "{}"
       );
-      
+
       // Force a re-render by updating state or triggering auth context
       if (token && storedUser && Object.keys(storedUser).length > 0 && !user) {
         // Trigger auth context update
-        window.dispatchEvent(new CustomEvent('userLogin', {
-          detail: { user: storedUser, token }
-        }));
+        window.dispatchEvent(
+          new CustomEvent("userLogin", {
+            detail: { user: storedUser, token },
+          })
+        );
       }
     };
 
@@ -45,7 +46,7 @@ const Navbar = () => {
 
     // Listen for storage changes
     const handleStorageChange = (e) => {
-      if (e.key === 'user' || e.key === 'token') {
+      if (e.key === "user" || e.key === "token") {
         checkUserData();
       }
     };
@@ -55,14 +56,14 @@ const Navbar = () => {
       setTimeout(checkUserData, 100); // Small delay to ensure storage is updated
     };
 
-    window.addEventListener('storage', handleStorageChange);
-    window.addEventListener('userLogin', handleUserLogin);
-    window.addEventListener('userLoggedIn', handleUserLogin); // Alternative event name
+    window.addEventListener("storage", handleStorageChange);
+    window.addEventListener("userLogin", handleUserLogin);
+    window.addEventListener("userLoggedIn", handleUserLogin); // Alternative event name
 
     return () => {
-      window.removeEventListener('storage', handleStorageChange);
-      window.removeEventListener('userLogin', handleUserLogin);
-      window.removeEventListener('userLoggedIn', handleUserLogin);
+      window.removeEventListener("storage", handleStorageChange);
+      window.removeEventListener("userLogin", handleUserLogin);
+      window.removeEventListener("userLoggedIn", handleUserLogin);
     };
   }, [user]);
 
@@ -83,7 +84,7 @@ const Navbar = () => {
   const displayUser = user || {
     name: "Khách",
     phoneNumber: null,
-    profileImage: null
+    profileImage: null,
   };
 
   // Show loading state
@@ -118,8 +119,12 @@ const Navbar = () => {
             onClick={() => handleNavigate("/home")}
           >
             <div className="flex items-center text-2xl font-black tracking-tight">
-              <span className="text-blue-600 group-hover:text-blue-700 transition-colors">VIE</span>
-              <span className="text-orange-500 group-hover:text-orange-600 transition-colors">STAY</span>
+              <span className="text-blue-600 group-hover:text-blue-700 transition-colors">
+                VIE
+              </span>
+              <span className="text-orange-500 group-hover:text-orange-600 transition-colors">
+                STAY
+              </span>
               <span className="text-gray-400">.COM</span>
             </div>
           </div>
@@ -137,7 +142,7 @@ const Navbar = () => {
               <Home size={18} />
               Tìm phòng
             </a>
-            
+
             <a
               href="/accommodations"
               onClick={(e) => {
@@ -207,9 +212,9 @@ const Navbar = () => {
                     <img
                       src={
                         displayUser.profileImage
-                          ? `https://vie-stay-server.vercel.app${displayUser.profileImage}`
+                          ? `https://vie-stay-server.onrender.com${displayUser.profileImage}`
                           : displayUser.avatar
-                          ? `https://vie-stay-server.vercel.app${displayUser.avatar}`
+                          ? `https://vie-stay-server.onrender.com${displayUser.avatar}`
                           : "https://via.placeholder.com/32"
                       }
                       alt="avatar"
@@ -220,7 +225,9 @@ const Navbar = () => {
                     />
                     <div className="hidden sm:flex items-center gap-1">
                       <span className="font-medium text-gray-700 max-w-20 truncate">
-                        {displayUser?.name?.split(' ')[0] || displayUser?.fullName?.split(' ')[0] || "User"}
+                        {displayUser?.name?.split(" ")[0] ||
+                          displayUser?.fullName?.split(" ")[0] ||
+                          "User"}
                       </span>
                       <ChevronDown size={16} className="text-gray-500" />
                     </div>
@@ -235,9 +242,9 @@ const Navbar = () => {
                           <img
                             src={
                               displayUser.profileImage
-                                ? `https://vie-stay-server.vercel.app${displayUser.profileImage}`
+                                ? `https://vie-stay-server.onrender.com${displayUser.profileImage}`
                                 : displayUser.avatar
-                                ? `https://vie-stay-server.vercel.app${displayUser.avatar}`
+                                ? `https://vie-stay-server.onrender.com${displayUser.avatar}`
                                 : "https://via.placeholder.com/40"
                             }
                             alt="avatar"
@@ -248,10 +255,15 @@ const Navbar = () => {
                           />
                           <div className="flex-1 min-w-0">
                             <p className="font-semibold text-gray-800 truncate">
-                              {displayUser.name || displayUser.fullName || "Người dùng"}
+                              {displayUser.name ||
+                                displayUser.fullName ||
+                                "Người dùng"}
                             </p>
                             <p className="text-sm text-gray-500 truncate">
-                              {displayUser.phoneNumber || displayUser.phone || displayUser.email || "Chưa có thông tin liên hệ"}
+                              {displayUser.phoneNumber ||
+                                displayUser.phone ||
+                                displayUser.email ||
+                                "Chưa có thông tin liên hệ"}
                             </p>
                           </div>
                         </div>

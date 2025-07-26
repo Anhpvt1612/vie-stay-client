@@ -16,7 +16,7 @@ import {
   Download,
   RefreshCw,
   UserCheck,
-  UserX
+  UserX,
 } from "lucide-react";
 
 const UserManagement = () => {
@@ -32,7 +32,7 @@ const UserManagement = () => {
     bannedUsers: 0,
     verifiedUsers: 0,
     tenants: 0,
-    landlords: 0
+    landlords: 0,
   });
 
   // Filters and search
@@ -54,39 +54,50 @@ const UserManagement = () => {
   // API call function with auth headers
   const apiCall = async (endpoint, options = {}) => {
     const token = getAuthToken();
-    
+
     const defaultOptions = {
       headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${token}`,
-        ...options.headers
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+        ...options.headers,
       },
-      ...options
+      ...options,
     };
 
-    const response = await fetch(`https://vie-stay-server.vercel.app${endpoint}`, defaultOptions);
-    
+    const response = await fetch(
+      `https://vie-stay-server.onrender.com${endpoint}`,
+      defaultOptions
+    );
+
     if (!response.ok) {
       throw new Error(`API Error: ${response.status}`);
     }
-    
+
     return response.json();
   };
 
   useEffect(() => {
     fetchUsers();
-  }, [currentPage, roleFilter, statusFilter, verificationFilter, searchTerm, sortBy, sortOrder]);
+  }, [
+    currentPage,
+    roleFilter,
+    statusFilter,
+    verificationFilter,
+    searchTerm,
+    sortBy,
+    sortOrder,
+  ]);
 
   const fetchUsers = async () => {
     try {
       setLoading(true);
-      
+
       // Build query parameters
       const params = new URLSearchParams({
         page: currentPage,
         limit: itemsPerPage,
         sortBy,
-        order: sortOrder
+        order: sortOrder,
       });
 
       if (roleFilter !== "all") params.append("role", roleFilter);
@@ -101,8 +112,8 @@ const UserManagement = () => {
       if (searchTerm) params.append("search", searchTerm);
 
       const response = await apiCall(`/admin/users?${params}`);
-      
-      if (response.status === 'success') {
+
+      if (response.status === "success") {
         setUsers(response.data.users);
         setStatistics(response.data.statistics);
       }
@@ -121,24 +132,22 @@ const UserManagement = () => {
       }
 
       const response = await apiCall(`/admin/users/${selectedUser._id}/ban`, {
-        method: 'PATCH',
-        body: JSON.stringify({ reason: banReason })
+        method: "PATCH",
+        body: JSON.stringify({ reason: banReason }),
       });
 
-      if (response.status === 'success') {
+      if (response.status === "success") {
         // Update local state
-        setUsers(prev =>
-          prev.map(user =>
-            user._id === selectedUser._id
-              ? { ...user, isActive: false }
-              : user
+        setUsers((prev) =>
+          prev.map((user) =>
+            user._id === selectedUser._id ? { ...user, isActive: false } : user
           )
         );
         // Update statistics
-        setStatistics(prev => ({
+        setStatistics((prev) => ({
           ...prev,
           activeUsers: prev.activeUsers - 1,
-          bannedUsers: prev.bannedUsers + 1
+          bannedUsers: prev.bannedUsers + 1,
         }));
 
         setShowBanModal(false);
@@ -154,23 +163,21 @@ const UserManagement = () => {
   const handleUnbanUser = async (userId) => {
     try {
       const response = await apiCall(`/admin/users/${userId}/unban`, {
-        method: 'PATCH'
+        method: "PATCH",
       });
 
-      if (response.status === 'success') {
+      if (response.status === "success") {
         // Update local state
-        setUsers(prev =>
-          prev.map(user =>
-            user._id === userId
-              ? { ...user, isActive: true }
-              : user
+        setUsers((prev) =>
+          prev.map((user) =>
+            user._id === userId ? { ...user, isActive: true } : user
           )
         );
         // Update statistics
-        setStatistics(prev => ({
+        setStatistics((prev) => ({
           ...prev,
           activeUsers: prev.activeUsers + 1,
-          bannedUsers: prev.bannedUsers - 1
+          bannedUsers: prev.bannedUsers - 1,
         }));
       }
     } catch (error) {
@@ -180,12 +187,12 @@ const UserManagement = () => {
   };
 
   const formatDate = (dateString) => {
-    return new Date(dateString).toLocaleDateString('vi-VN', {
-      day: '2-digit',
-      month: '2-digit',
-      year: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit'
+    return new Date(dateString).toLocaleDateString("vi-VN", {
+      day: "2-digit",
+      month: "2-digit",
+      year: "numeric",
+      hour: "2-digit",
+      minute: "2-digit",
     });
   };
 
@@ -193,7 +200,7 @@ const UserManagement = () => {
     const roleColors = {
       tenant: "bg-blue-100 text-blue-800",
       landlord: "bg-purple-100 text-purple-800",
-      admin: "bg-red-100 text-red-800"
+      admin: "bg-red-100 text-red-800",
     };
 
     if (!roles || !Array.isArray(roles)) {
@@ -204,8 +211,13 @@ const UserManagement = () => {
       );
     }
 
-    return roles.map(role => (
-      <span key={role} className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium mr-1 ${roleColors[role] || 'bg-gray-100 text-gray-800'}`}>
+    return roles.map((role) => (
+      <span
+        key={role}
+        className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium mr-1 ${
+          roleColors[role] || "bg-gray-100 text-gray-800"
+        }`}
+      >
         {role.charAt(0).toUpperCase() + role.slice(1)}
       </span>
     ));
@@ -220,7 +232,7 @@ const UserManagement = () => {
         </span>
       );
     }
-    
+
     if (!isVerified) {
       return (
         <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800">
@@ -244,7 +256,9 @@ const UserManagement = () => {
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-2xl font-bold text-gray-900">User Management</h1>
-          <p className="text-gray-600">Manage users, roles, and account status</p>
+          <p className="text-gray-600">
+            Manage users, roles, and account status
+          </p>
         </div>
         <div className="flex items-center space-x-3">
           <button
@@ -268,7 +282,9 @@ const UserManagement = () => {
             <User className="w-8 h-8 text-blue-600" />
             <div className="ml-3">
               <p className="text-sm font-medium text-gray-600">Total Users</p>
-              <p className="text-xl font-bold text-gray-900">{statistics.totalUsers}</p>
+              <p className="text-xl font-bold text-gray-900">
+                {statistics.totalUsers}
+              </p>
             </div>
           </div>
         </div>
@@ -277,7 +293,9 @@ const UserManagement = () => {
             <UserCheck className="w-8 h-8 text-green-600" />
             <div className="ml-3">
               <p className="text-sm font-medium text-gray-600">Active</p>
-              <p className="text-xl font-bold text-gray-900">{statistics.activeUsers}</p>
+              <p className="text-xl font-bold text-gray-900">
+                {statistics.activeUsers}
+              </p>
             </div>
           </div>
         </div>
@@ -286,7 +304,9 @@ const UserManagement = () => {
             <UserX className="w-8 h-8 text-red-600" />
             <div className="ml-3">
               <p className="text-sm font-medium text-gray-600">Banned</p>
-              <p className="text-xl font-bold text-gray-900">{statistics.bannedUsers}</p>
+              <p className="text-xl font-bold text-gray-900">
+                {statistics.bannedUsers}
+              </p>
             </div>
           </div>
         </div>
@@ -295,7 +315,9 @@ const UserManagement = () => {
             <CheckCircle className="w-8 h-8 text-green-600" />
             <div className="ml-3">
               <p className="text-sm font-medium text-gray-600">Verified</p>
-              <p className="text-xl font-bold text-gray-900">{statistics.verifiedUsers}</p>
+              <p className="text-xl font-bold text-gray-900">
+                {statistics.verifiedUsers}
+              </p>
             </div>
           </div>
         </div>
@@ -304,7 +326,9 @@ const UserManagement = () => {
             <User className="w-8 h-8 text-blue-600" />
             <div className="ml-3">
               <p className="text-sm font-medium text-gray-600">Tenants</p>
-              <p className="text-xl font-bold text-gray-900">{statistics.tenants}</p>
+              <p className="text-xl font-bold text-gray-900">
+                {statistics.tenants}
+              </p>
             </div>
           </div>
         </div>
@@ -313,7 +337,9 @@ const UserManagement = () => {
             <Shield className="w-8 h-8 text-purple-600" />
             <div className="ml-3">
               <p className="text-sm font-medium text-gray-600">Landlords</p>
-              <p className="text-xl font-bold text-gray-900">{statistics.landlords}</p>
+              <p className="text-xl font-bold text-gray-900">
+                {statistics.landlords}
+              </p>
             </div>
           </div>
         </div>
@@ -409,14 +435,21 @@ const UserManagement = () => {
                     <td className="px-6 py-4 whitespace-nowrap">
                       <div className="flex items-center">
                         <img
-                          src={user.profileImage || `https://ui-avatars.com/api/?name=${encodeURIComponent(user.name || 'User')}&background=6366f1&color=fff`}
-                          alt={user.name || 'User'}
+                          src={
+                            user.profileImage ||
+                            `https://ui-avatars.com/api/?name=${encodeURIComponent(
+                              user.name || "User"
+                            )}&background=6366f1&color=fff`
+                          }
+                          alt={user.name || "User"}
                           className="w-10 h-10 rounded-full object-cover"
                         />
                         <div className="ml-4">
-                          <div className="text-sm font-medium text-gray-900">{user.name || 'N/A'}</div>
+                          <div className="text-sm font-medium text-gray-900">
+                            {user.name || "N/A"}
+                          </div>
                           <div className="text-sm text-gray-500">
-                            Joined {formatDate(user.createdAt).split(',')[0]}
+                            Joined {formatDate(user.createdAt).split(",")[0]}
                           </div>
                         </div>
                       </div>
@@ -424,11 +457,11 @@ const UserManagement = () => {
                     <td className="px-6 py-4 whitespace-nowrap">
                       <div className="text-sm text-gray-900 flex items-center">
                         <Mail className="w-4 h-4 mr-1 text-gray-400" />
-                        {user.email || 'N/A'}
+                        {user.email || "N/A"}
                       </div>
                       <div className="text-sm text-gray-500 flex items-center mt-1">
                         <Phone className="w-4 h-4 mr-1 text-gray-400" />
-                        {user.phoneNumber || 'Not provided'}
+                        {user.phoneNumber || "Not provided"}
                       </div>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
@@ -438,7 +471,7 @@ const UserManagement = () => {
                       {getStatusBadge(user.isActive, user.isVerified)}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                      {user.lastLogin ? formatDate(user.lastLogin) : 'Never'}
+                      {user.lastLogin ? formatDate(user.lastLogin) : "Never"}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
                       <div className="flex items-center space-x-2">
@@ -452,7 +485,7 @@ const UserManagement = () => {
                         >
                           <Eye className="w-4 h-4" />
                         </button>
-                        
+
                         {user.isActive ? (
                           <button
                             onClick={() => {
@@ -485,8 +518,12 @@ const UserManagement = () => {
         {users.length === 0 && !loading && (
           <div className="text-center py-12">
             <User className="mx-auto h-12 w-12 text-gray-400" />
-            <h3 className="mt-2 text-sm font-medium text-gray-900">No users found</h3>
-            <p className="mt-1 text-sm text-gray-500">Try adjusting your search or filter criteria.</p>
+            <h3 className="mt-2 text-sm font-medium text-gray-900">
+              No users found
+            </h3>
+            <p className="mt-1 text-sm text-gray-500">
+              Try adjusting your search or filter criteria.
+            </p>
           </div>
         )}
       </div>
@@ -504,33 +541,51 @@ const UserManagement = () => {
                 <XCircle className="w-6 h-6" />
               </button>
             </div>
-            
+
             <div className="p-6 space-y-6">
               {/* Profile Section */}
               <div className="flex items-center space-x-4">
                 <img
-                  src={selectedUser.profileImage || `https://ui-avatars.com/api/?name=${encodeURIComponent(selectedUser.name || 'User')}&background=6366f1&color=fff&size=80`}
-                  alt={selectedUser.name || 'User'}
+                  src={
+                    selectedUser.profileImage ||
+                    `https://ui-avatars.com/api/?name=${encodeURIComponent(
+                      selectedUser.name || "User"
+                    )}&background=6366f1&color=fff&size=80`
+                  }
+                  alt={selectedUser.name || "User"}
                   className="w-20 h-20 rounded-full object-cover"
                 />
                 <div>
-                  <h4 className="text-xl font-semibold text-gray-900">{selectedUser.name || 'N/A'}</h4>
+                  <h4 className="text-xl font-semibold text-gray-900">
+                    {selectedUser.name || "N/A"}
+                  </h4>
                   <div className="mt-1">{getRoleBadge(selectedUser.role)}</div>
-                  <div className="mt-2">{getStatusBadge(selectedUser.isActive, selectedUser.isVerified)}</div>
+                  <div className="mt-2">
+                    {getStatusBadge(
+                      selectedUser.isActive,
+                      selectedUser.isVerified
+                    )}
+                  </div>
                 </div>
               </div>
 
               {/* Contact Information */}
               <div>
-                <h5 className="font-semibold text-gray-900 mb-3">Contact Information</h5>
+                <h5 className="font-semibold text-gray-900 mb-3">
+                  Contact Information
+                </h5>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div className="flex items-center">
                     <Mail className="w-4 h-4 text-gray-400 mr-2" />
-                    <span className="text-sm">{selectedUser.email || 'N/A'}</span>
+                    <span className="text-sm">
+                      {selectedUser.email || "N/A"}
+                    </span>
                   </div>
                   <div className="flex items-center">
                     <Phone className="w-4 h-4 text-gray-400 mr-2" />
-                    <span className="text-sm">{selectedUser.phoneNumber || 'Not provided'}</span>
+                    <span className="text-sm">
+                      {selectedUser.phoneNumber || "Not provided"}
+                    </span>
                   </div>
                 </div>
               </div>
@@ -539,29 +594,43 @@ const UserManagement = () => {
               {selectedUser.address?.fullAddress && (
                 <div>
                   <h5 className="font-semibold text-gray-900 mb-3">Address</h5>
-                  <p className="text-sm text-gray-600">{selectedUser.address.fullAddress}</p>
+                  <p className="text-sm text-gray-600">
+                    {selectedUser.address.fullAddress}
+                  </p>
                 </div>
               )}
 
               {/* Account Information */}
               <div>
-                <h5 className="font-semibold text-gray-900 mb-3">Account Information</h5>
+                <h5 className="font-semibold text-gray-900 mb-3">
+                  Account Information
+                </h5>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
                   <div>
                     <span className="font-medium">Member since:</span>
-                    <span className="ml-2">{formatDate(selectedUser.createdAt)}</span>
+                    <span className="ml-2">
+                      {formatDate(selectedUser.createdAt)}
+                    </span>
                   </div>
                   <div>
                     <span className="font-medium">Last login:</span>
-                    <span className="ml-2">{selectedUser.lastLogin ? formatDate(selectedUser.lastLogin) : 'Never'}</span>
+                    <span className="ml-2">
+                      {selectedUser.lastLogin
+                        ? formatDate(selectedUser.lastLogin)
+                        : "Never"}
+                    </span>
                   </div>
                   <div>
                     <span className="font-medium">Email verified:</span>
-                    <span className="ml-2">{selectedUser.isVerified ? 'Yes' : 'No'}</span>
+                    <span className="ml-2">
+                      {selectedUser.isVerified ? "Yes" : "No"}
+                    </span>
                   </div>
                   <div>
                     <span className="font-medium">Account status:</span>
-                    <span className="ml-2">{selectedUser.isActive ? 'Active' : 'Banned'}</span>
+                    <span className="ml-2">
+                      {selectedUser.isActive ? "Active" : "Banned"}
+                    </span>
                   </div>
                 </div>
               </div>
@@ -569,10 +638,14 @@ const UserManagement = () => {
               {/* Additional Info */}
               {selectedUser.dateOfBirth && (
                 <div>
-                  <h5 className="font-semibold text-gray-900 mb-3">Personal Information</h5>
+                  <h5 className="font-semibold text-gray-900 mb-3">
+                    Personal Information
+                  </h5>
                   <div className="text-sm">
                     <span className="font-medium">Date of Birth:</span>
-                    <span className="ml-2">{formatDate(selectedUser.dateOfBirth)}</span>
+                    <span className="ml-2">
+                      {formatDate(selectedUser.dateOfBirth)}
+                    </span>
                   </div>
                 </div>
               )}
@@ -613,16 +686,18 @@ const UserManagement = () => {
             <div className="px-6 py-4 border-b border-gray-200">
               <h3 className="text-lg font-semibold text-red-600">Ban User</h3>
             </div>
-            
+
             <div className="p-6">
               <div className="flex items-center mb-4">
                 <AlertTriangle className="w-8 h-8 text-red-500 mr-3" />
                 <div>
-                  <p className="font-medium">Ban {selectedUser.name || 'this user'}?</p>
+                  <p className="font-medium">
+                    Ban {selectedUser.name || "this user"}?
+                  </p>
                   <p className="text-sm text-gray-600">{selectedUser.email}</p>
                 </div>
               </div>
-              
+
               <p className="text-gray-600 mb-4">
                 Please provide a reason for banning this user:
               </p>
@@ -634,7 +709,7 @@ const UserManagement = () => {
                 rows={3}
               />
             </div>
-            
+
             <div className="px-6 py-4 border-t border-gray-200 flex items-center justify-end space-x-3">
               <button
                 onClick={() => {

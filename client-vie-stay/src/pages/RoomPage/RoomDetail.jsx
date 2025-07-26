@@ -12,10 +12,10 @@ const RoomDetail = () => {
   const queryParams = new URLSearchParams(location.search);
   const returnPage = parseInt(queryParams.get("returnPage")) || 1;
 
-  console.log(`🔍 RoomDetail component loaded:`, { 
-    id, 
+  console.log(`🔍 RoomDetail component loaded:`, {
+    id,
     locationState: location.state,
-    pathname: location.pathname 
+    pathname: location.pathname,
   });
 
   const { room: roomFromState } = location.state || {};
@@ -25,11 +25,11 @@ const RoomDetail = () => {
   const [loading, setLoading] = useState(!roomFromState);
   const [error, setError] = useState(null);
 
-  console.log(`🔍 RoomDetail state:`, { 
+  console.log(`🔍 RoomDetail state:`, {
     hasRoomFromState: !!roomFromState,
     roomId: id,
     loading,
-    error 
+    error,
   });
 
   const [sliderRef, instanceRef] = useKeenSlider({
@@ -66,9 +66,9 @@ const RoomDetail = () => {
 
       // Try multiple endpoints
       const endpoints = [
-        `https://vie-stay-server.vercel.app/rooms/${id}`,
-        `https://vie-stay-server.vercel.app/api/rooms/${id}`,
-        `https://vie-stay-server.vercel.app/room/${id}`,
+        `https://vie-stay-server.onrender.com/rooms/${id}`,
+        `https://vie-stay-server.onrender.com/api/rooms/${id}`,
+        `https://vie-stay-server.onrender.com/room/${id}`,
       ];
 
       const fetchRoom = async () => {
@@ -76,10 +76,10 @@ const RoomDetail = () => {
           try {
             console.log("Trying endpoint:", endpoint);
             const response = await fetch(endpoint, {
-              method: 'GET',
+              method: "GET",
               headers: {
-                'Content-Type': 'application/json',
-              }
+                "Content-Type": "application/json",
+              },
             });
 
             if (response.ok) {
@@ -126,7 +126,9 @@ const RoomDetail = () => {
         <div className="min-h-screen flex items-center justify-center">
           <div className="text-center">
             <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-orange-500 mx-auto"></div>
-            <p className="mt-4 text-gray-600 text-lg">Đang tải thông tin phòng...</p>
+            <p className="mt-4 text-gray-600 text-lg">
+              Đang tải thông tin phòng...
+            </p>
           </div>
         </div>
         <Footer />
@@ -141,10 +143,12 @@ const RoomDetail = () => {
         <div className="min-h-screen flex items-center justify-center">
           <div className="text-center max-w-md">
             <div className="text-red-500 text-6xl mb-4">⚠️</div>
-            <h2 className="text-2xl font-bold text-gray-800 mb-2">Lỗi tải dữ liệu</h2>
+            <h2 className="text-2xl font-bold text-gray-800 mb-2">
+              Lỗi tải dữ liệu
+            </h2>
             <p className="text-red-500 mb-4 text-sm">{error}</p>
-            <button 
-              onClick={() => navigate('/rooms')}
+            <button
+              onClick={() => navigate("/rooms")}
               className="bg-orange-500 hover:bg-orange-600 text-white px-6 py-3 rounded-lg font-medium transition-colors"
             >
               Quay về danh sách phòng
@@ -163,10 +167,14 @@ const RoomDetail = () => {
         <div className="min-h-screen flex items-center justify-center">
           <div className="text-center">
             <div className="text-gray-400 text-6xl mb-4">🏠</div>
-            <h2 className="text-2xl font-bold text-gray-800 mb-2">Không tìm thấy phòng</h2>
-            <p className="text-gray-500 mb-4">Phòng bạn đang tìm có thể đã được gỡ bỏ hoặc không tồn tại.</p>
-            <button 
-              onClick={() => navigate('/rooms')}
+            <h2 className="text-2xl font-bold text-gray-800 mb-2">
+              Không tìm thấy phòng
+            </h2>
+            <p className="text-gray-500 mb-4">
+              Phòng bạn đang tìm có thể đã được gỡ bỏ hoặc không tồn tại.
+            </p>
+            <button
+              onClick={() => navigate("/rooms")}
               className="bg-orange-500 hover:bg-orange-600 text-white px-6 py-3 rounded-lg font-medium transition-colors"
             >
               Quay về danh sách phòng
@@ -206,8 +214,12 @@ const RoomDetail = () => {
 
         {/* Tiêu đề */}
         <div className="text-center md:text-left space-y-1">
-          <h1 className="text-3xl font-extrabold text-orange-600">{room.name || "Chi tiết phòng"}</h1>
-          <p className="text-gray-600 text-sm">{room.description || "Mô tả phòng trọ"}</p>
+          <h1 className="text-3xl font-extrabold text-orange-600">
+            {room.name || "Chi tiết phòng"}
+          </h1>
+          <p className="text-gray-600 text-sm">
+            {room.description || "Mô tả phòng trọ"}
+          </p>
         </div>
 
         {/* Slider ảnh */}
@@ -219,13 +231,17 @@ const RoomDetail = () => {
             >
               <div ref={sliderRef} className="keen-slider h-[420px]">
                 {room.images.map((img, i) => (
-                  <div key={i} className="keen-slider__slide flex justify-center items-center">
-                    <img 
-                      src={img} 
-                      alt={`Ảnh ${i + 1}`} 
+                  <div
+                    key={i}
+                    className="keen-slider__slide flex justify-center items-center"
+                  >
+                    <img
+                      src={img}
+                      alt={`Ảnh ${i + 1}`}
                       className="h-full object-contain"
                       onError={(e) => {
-                        e.target.src = 'https://via.placeholder.com/800x420?text=Không+thể+tải+ảnh';
+                        e.target.src =
+                          "https://via.placeholder.com/800x420?text=Không+thể+tải+ảnh";
                       }}
                     />
                   </div>
@@ -264,7 +280,8 @@ const RoomDetail = () => {
                   }`}
                   onClick={() => instanceRef.current?.moveToIdx(i)}
                   onError={(e) => {
-                    e.target.src = 'https://via.placeholder.com/80x64?text=No+Image';
+                    e.target.src =
+                      "https://via.placeholder.com/80x64?text=No+Image";
                   }}
                 />
               ))}
@@ -285,15 +302,22 @@ const RoomDetail = () => {
             className="fixed inset-0 bg-black bg-opacity-90 z-50 flex flex-col items-center justify-center"
             onClick={() => setShowFullscreen(false)}
           >
-            <div className="keen-slider w-full max-w-6xl h-[85vh]" ref={sliderRef}>
+            <div
+              className="keen-slider w-full max-w-6xl h-[85vh]"
+              ref={sliderRef}
+            >
               {room.images.map((img, i) => (
-                <div key={i} className="keen-slider__slide flex justify-center items-center">
-                  <img 
-                    src={img} 
-                    alt={`Ảnh ${i + 1}`} 
+                <div
+                  key={i}
+                  className="keen-slider__slide flex justify-center items-center"
+                >
+                  <img
+                    src={img}
+                    alt={`Ảnh ${i + 1}`}
                     className="max-h-full object-contain"
                     onError={(e) => {
-                      e.target.src = 'https://via.placeholder.com/800x600?text=Không+thể+tải+ảnh';
+                      e.target.src =
+                        "https://via.placeholder.com/800x600?text=Không+thể+tải+ảnh";
                     }}
                   />
                 </div>
@@ -311,29 +335,44 @@ const RoomDetail = () => {
         {/* Thông tin chi tiết */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8 text-sm text-gray-800">
           <div className="space-y-2">
-            <p><strong>Loại phòng:</strong> {room.type || "Không xác định"}</p>
-            <p><strong>Diện tích:</strong> {room.size || "N/A"} m²</p>
-            <p><strong>Sức chứa:</strong> {room.capacity || "N/A"} người</p>
-            <p><strong>Trang bị:</strong> {
-              room.furnishingLevel === "fully"
+            <p>
+              <strong>Loại phòng:</strong> {room.type || "Không xác định"}
+            </p>
+            <p>
+              <strong>Diện tích:</strong> {room.size || "N/A"} m²
+            </p>
+            <p>
+              <strong>Sức chứa:</strong> {room.capacity || "N/A"} người
+            </p>
+            <p>
+              <strong>Trang bị:</strong>{" "}
+              {room.furnishingLevel === "fully"
                 ? "Đầy đủ nội thất"
                 : room.furnishingLevel === "semi"
                 ? "Nội thất cơ bản"
                 : room.furnishingLevel === "unfurnished"
                 ? "Không có nội thất"
-                : "Không xác định"
-            }</p>
-            <p><strong>Phòng tắm riêng:</strong> {room.hasPrivateBathroom ? "Có" : "Không"}</p>
+                : "Không xác định"}
+            </p>
+            <p>
+              <strong>Phòng tắm riêng:</strong>{" "}
+              {room.hasPrivateBathroom ? "Có" : "Không"}
+            </p>
             <p>
               <strong>Trạng thái:</strong>{" "}
-              <span className={`inline-block px-2 py-0.5 rounded-full text-white text-xs ${
-                room.isAvailable !== false ? "bg-green-500" : "bg-red-500"
-              }`}>
+              <span
+                className={`inline-block px-2 py-0.5 rounded-full text-white text-xs ${
+                  room.isAvailable !== false ? "bg-green-500" : "bg-red-500"
+                }`}
+              >
                 {room.isAvailable !== false ? "Còn trống" : "Đã thuê"}
               </span>
             </p>
             {room.availableFrom && (
-              <p><strong>Có sẵn từ:</strong> {new Date(room.availableFrom).toLocaleDateString("vi-VN")}</p>
+              <p>
+                <strong>Có sẵn từ:</strong>{" "}
+                {new Date(room.availableFrom).toLocaleDateString("vi-VN")}
+              </p>
             )}
           </div>
 
@@ -387,7 +426,8 @@ const RoomDetail = () => {
             <ul className="text-sm text-gray-700 list-disc list-inside">
               {room.additionalFees.map((fee, idx) => (
                 <li key={idx}>
-                  {fee.description}: {formatCurrencyVND(fee.amount)} / {fee.type}
+                  {fee.description}: {formatCurrencyVND(fee.amount)} /{" "}
+                  {fee.type}
                 </li>
               ))}
             </ul>
@@ -399,8 +439,10 @@ const RoomDetail = () => {
           <div className="bg-blue-50 p-4 rounded-md">
             <h3 className="font-semibold text-gray-800 mb-2">📍 Địa chỉ</h3>
             <p className="text-sm text-gray-700">
-              {room.accommodationId.address.fullAddress || 
-               `${room.accommodationId.address.street || ''}, ${room.accommodationId.address.ward || ''}, ${room.accommodationId.address.district || ''}`}
+              {room.accommodationId.address.fullAddress ||
+                `${room.accommodationId.address.street || ""}, ${
+                  room.accommodationId.address.ward || ""
+                }, ${room.accommodationId.address.district || ""}`}
             </p>
           </div>
         )}
@@ -408,20 +450,29 @@ const RoomDetail = () => {
         {/* Thông tin chủ trọ */}
         {room.accommodationId?.ownerId && (
           <div className="bg-green-50 p-4 rounded-md">
-            <h3 className="font-semibold text-gray-800 mb-2">👤 Thông tin chủ trọ</h3>
+            <h3 className="font-semibold text-gray-800 mb-2">
+              👤 Thông tin chủ trọ
+            </h3>
             <div className="flex items-center gap-3">
               <img
-                src={room.accommodationId.ownerId.avatar || "https://cdn-icons-png.flaticon.com/512/847/847969.png"}
+                src={
+                  room.accommodationId.ownerId.avatar ||
+                  "https://cdn-icons-png.flaticon.com/512/847/847969.png"
+                }
                 alt="avatar chủ trọ"
                 className="w-12 h-12 rounded-full object-cover"
                 onError={(e) => {
-                  e.target.src = "https://cdn-icons-png.flaticon.com/512/847/847969.png";
+                  e.target.src =
+                    "https://cdn-icons-png.flaticon.com/512/847/847969.png";
                 }}
               />
               <div>
-                <p className="font-semibold">{room.accommodationId.ownerId.name || "Chủ trọ"}</p>
+                <p className="font-semibold">
+                  {room.accommodationId.ownerId.name || "Chủ trọ"}
+                </p>
                 <p className="text-sm text-gray-600">
-                  {room.accommodationId.contactInfo?.phone || "Liên hệ để biết thêm thông tin"}
+                  {room.accommodationId.contactInfo?.phone ||
+                    "Liên hệ để biết thêm thông tin"}
                 </p>
               </div>
             </div>
@@ -432,7 +483,8 @@ const RoomDetail = () => {
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center pt-4 border-t text-sm text-gray-600 gap-2">
           <div>{RatingConsider(room.averageRating)}</div>
           <div>
-            👁️ {room.viewCount || 0} lượt xem | ❤️ {room.favoriteCount || 0} thích | 📝 {room.totalRatings || 0} đánh giá
+            👁️ {room.viewCount || 0} lượt xem | ❤️ {room.favoriteCount || 0}{" "}
+            thích | 📝 {room.totalRatings || 0} đánh giá
           </div>
         </div>
 

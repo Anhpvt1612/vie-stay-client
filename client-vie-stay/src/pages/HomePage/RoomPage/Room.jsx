@@ -30,7 +30,7 @@ const Room = () => {
   useEffect(() => {
     const loadRooms = async () => {
       try {
-        const res = await fetch("https://vie-stay-server.vercel.app/rooms");
+        const res = await fetch("https://vie-stay-server.onrender.com/rooms");
         if (!res.ok) {
           throw new Error("Lỗi server khi tải danh sách phòng");
         }
@@ -105,7 +105,11 @@ const Room = () => {
     }
 
     if (endPage < totalPages - 1) {
-      buttons.push(<span key="dots" className="text-gray-400 px-2">...</span>);
+      buttons.push(
+        <span key="dots" className="text-gray-400 px-2">
+          ...
+        </span>
+      );
     }
 
     if (endPage < totalPages) {
@@ -136,7 +140,8 @@ const Room = () => {
           <>
             <div className="space-y-6">
               {currentRooms.map((room) => {
-                const roomId = room._id?.$oid || room._id?.toString?.() || room._id;
+                const roomId =
+                  room._id?.$oid || room._id?.toString?.() || room._id;
 
                 return (
                   <Link
@@ -145,7 +150,11 @@ const Room = () => {
                     state={{ room }}
                     key={roomId}
                     className={`border rounded-lg overflow-hidden shadow transition block bg-white
-                      ${highlightId === roomId ? "ring-2 ring-orange-400" : "hover:shadow-lg"}`}
+                      ${
+                        highlightId === roomId
+                          ? "ring-2 ring-orange-400"
+                          : "hover:shadow-lg"
+                      }`}
                   >
                     <div className="flex flex-col md:flex-row">
                       <div className="relative md:w-[45%] h-60">
@@ -190,7 +199,9 @@ const Room = () => {
                             alt="avatar"
                             className="w-6 h-6 rounded-full object-cover"
                           />
-                          <span className="font-semibold">{room.owner || "Người đăng"}</span>
+                          <span className="font-semibold">
+                            {room.owner || "Người đăng"}
+                          </span>
                           <span className="text-gray-400">• Hôm nay</span>
                         </div>
                         <span className="bg-green-100 text-green-700 font-bold px-3 py-1 rounded-full text-sm">
