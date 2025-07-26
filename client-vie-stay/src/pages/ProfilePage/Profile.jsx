@@ -119,30 +119,10 @@ export default function Profile() {
     if (!profile.name || profile.name.trim().length < 2)
       newErrors.name = "Họ tên không hợp lệ";
     // Validate số điện thoại chính chủ
-<<<<<<< HEAD
-    if (!/^(0|\+84)[0-9]{9,10}$/.test(profile.phoneNumber))
-      newErrors.phoneNumber = "Số điện thoại không hợp lệ";
-    if (profile.dateOfBirth && new Date(profile.dateOfBirth) > new Date())
-      newErrors.dateOfBirth = "Ngày sinh không hợp lệ";
-    if (profile.nationalId && profile.nationalId.length > 20)
-      newErrors.nationalId = "Số CMND/CCCD tối đa 20 ký tự";
-    if (!profile.address.fullAddress)
-      newErrors.fullAddress = "Địa chỉ đầy đủ không được để trống";
-    if (!profile.emergencyContact.name)
-      newErrors.emergencyName = "Tên liên hệ không được để trống";
-    // Validate số điện thoại người liên hệ khẩn cấp
-    if (
-      !profile.emergencyContact.phoneNumber ||
-      !/^(0|\+84)[0-9]{9,10}$/.test(profile.emergencyContact.phoneNumber)
-    ) {
-      newErrors.emergencyPhoneNumber = "Số điện thoại liên hệ không hợp lệ";
-    }
-=======
     if (!/^(0|\+84)[0-9]{9,10}$/.test(profile.phoneNumber)) newErrors.phoneNumber = "Số điện thoại không hợp lệ";
     if (profile.dateOfBirth && new Date(profile.dateOfBirth) > new Date()) newErrors.dateOfBirth = "Ngày sinh không hợp lệ";
     if (profile.nationalId && profile.nationalId.length > 20) newErrors.nationalId = "Số CMND/CCCD tối đa 20 ký tự";
     
->>>>>>> 3fc6e90043b345ac0f0644c3cee6a8006732707b
     // Validate file (nếu là file mới)
     if (profile.profileImage && typeof profile.profileImage === "object") {
       if (!profile.profileImage.type.startsWith("image/"))
